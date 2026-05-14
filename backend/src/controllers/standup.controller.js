@@ -29,3 +29,34 @@ export async function submitStandup(req, res) {
     res.status(500).json({ success: false, message: "Failed to save standup" });
   }
 }
+
+export async function getTeamStandups(req, res) {
+  try {
+    const { teamId } = req.params;
+
+    // Default to Singapore today if no date is provided in query
+    const date =
+      req.query.date ||
+      new Date().toLocaleDateString("en-CA", {
+        timeZone: "Asia/Singapore",
+      });
+
+    // 1. Find all standups for this team on this date
+    // We populate the userId to get the member's name and email for the UI
+    const standups = await Standup.find({ teamId, date })
+      .populate("userId", "name email")
+      .sort({ createdAt: 1 }); // Show who posted first
+
+    res.json({
+      success: true,
+      date,
+      count: standups.length,
+      data: standups,
+    });
+  } catch (err) {
+    console.error("[getTeamStandups]", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch team board" });
+  }
+}

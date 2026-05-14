@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { teamField } from "./common.schema";
+import { teamField } from "./common.schema.js";
 
 export const createStandupSchema = z.object({
   teamId: teamField,
