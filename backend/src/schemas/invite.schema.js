@@ -16,5 +16,5 @@ export const createInviteSchema = z.object({
   teamId: z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, "Invalid Team ID format")
-    .optional(),
+    .min(1),
 });

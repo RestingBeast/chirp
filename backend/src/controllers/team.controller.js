@@ -2,7 +2,6 @@ import Team from "../models/team.model.js";
 
 export async function createTeam(req, res) {
   try {
-    console.log(req.user);
     const team = await Team.create({
       name: req.body.name,
       adminId: req.user.sub,

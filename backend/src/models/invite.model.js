@@ -18,7 +18,7 @@ const inviteSchema = new mongoose.Schema(
     teamId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
-      required: false, // Optional if you haven't implemented teams yet
+      required: true,
     },
     role: {
       type: String,

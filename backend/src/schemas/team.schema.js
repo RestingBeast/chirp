@@ -10,5 +10,5 @@ export const createTeamSchema = z.object({
   adminId: z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, "Invalid Admin ID format")
-    .optional(),
+    .min(1),
 });
