@@ -27,6 +27,7 @@ function sendTokenResponse(res, user, statusCode = 200) {
     sub: user._id,
     email: user.email,
     role: user.role,
+    teamId: user.teamId,
   });
 
   res.status(statusCode).json({
