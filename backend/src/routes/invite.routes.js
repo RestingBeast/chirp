@@ -9,7 +9,11 @@ import {
 
 const router = Router();
 
-// POST /invite/create
+/**
+ * @route   POST /api/invites/create
+ * @desc
+ * @access  Private
+ */
 router.post(
   "/create",
   protect,
@@ -18,7 +22,11 @@ router.post(
   createInvite,
 );
 
-// GET /invite/:token
+/**
+ * @route   GET /api/invites/:token
+ * @desc
+ * @access  Public
+ */
 router.get("/:token", validateInvite);
 
 export default router;

@@ -6,10 +6,18 @@ import { protect } from "../middlewares/auth.js";
 
 const router = Router();
 
-// POST /auth/register
+/**
+ * @route   POST /api/auth/register
+ * @desc
+ * @access  Private
+ */
 router.post("/register", validate(registerSchema), register);
 
-// POST /auth/login
+/**
+ * @route   POST /api/auth/login
+ * @desc
+ * @access  Private
+ */
 router.post("/login", validate(loginSchema), login);
 
 export default router;
