@@ -10,7 +10,7 @@ export async function submitStandupAction(formData: {
   blockers: string;
 }) {
   try {
-    const response = await serverApiClient.post("/standups", formData);
+    const response = await serverApiClient.post("/api/standups", formData);
     revalidatePath("/board"); // Refresh the team board data
     return { success: true, data: response };
   } catch (error: any) {
@@ -26,7 +26,7 @@ export async function submitStandupAction(formData: {
 export async function getTeamBoardAction(teamId: string) {
   try {
     // This calls your GET /api/standups/team/:teamId route
-    const data = await serverApiClient.get(`/standups/team/${teamId}`);
+    const data = await serverApiClient.get(`/api/standups/team/${teamId}`);
     return { success: true, standups: data.data, date: data.date };
   } catch (error: any) {
     return { success: false, message: "Failed to load team board" };

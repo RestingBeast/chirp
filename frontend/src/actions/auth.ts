@@ -8,7 +8,7 @@ export async function loginAction(formData: any) {
   try {
     // serverApiClient forwards the request to your Node.js backend
     // Your backend (auth.controller.js) will set the HttpOnly cookie in the response
-    const data = await serverApiClient.post(`/auth/login`, formData);
+    const data = await serverApiClient.post(`/api/auth/login`, formData);
 
     const expirationDays = Number(process.env.TOKEN_EXPIRATION);
     const cookieStore = await cookies();
@@ -32,7 +32,7 @@ export async function loginAction(formData: any) {
 
 export async function registerAction(payload: any) {
   try {
-    const data = await serverApiClient.post("/auth/register", payload);
+    const data = await serverApiClient.post("/api/auth/register", payload);
 
     const expirationDays = Number(process.env.TOKEN_EXPIRATION);
     const cookieStore = await cookies();
@@ -72,7 +72,7 @@ export async function logoutAction() {
 
 export async function validateInviteAction(token: string) {
   try {
-    const data = await serverApiClient.get(`/invites/${token}`);
+    const data = await serverApiClient.get(`/api/invites/${token}`);
     return { success: true, email: data.email };
   } catch (error: any) {
     return {
