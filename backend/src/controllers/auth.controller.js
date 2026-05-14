@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import Invite from "../models/invite.model.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
@@ -41,9 +42,30 @@ function sendTokenResponse(res, user, statusCode = 200) {
 
 export async function register(req, res) {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, inviteToken } = req.body;
 
-    // Duplicate email check — Mongo unique index will also catch this,
+    const invite = await Invite.findOne({
+      token: inviteToken,
+      used: false,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!invite) {
+      return res.status(410).json({
+        success: false,
+        message: "This invite link is invalid or has expired.",
+      });
+    }
+
+    // 2. Ensure the email used for registration matches the invited email
+    if (invite.email !== email.toLowerCase()) {
+      return res.status(403).json({
+        success: false,
+        message: "This invite was issued for a different email address.",
+      });
+    }
+
+    // 3. Duplicate email check — Mongo unique index will also catch this,
     // but checking explicitly gives a cleaner error message.
     const existing = await User.findOne({ email: email.toLowerCase() });
     if (existing) {
@@ -59,7 +81,12 @@ export async function register(req, res) {
       name,
       email,
       passwordHash: password,
+      role: invite.role || "member",
+      // teamId: invite.teamId || null,
     });
+
+    invite.used = true;
+    await invite.save();
 
     return sendTokenResponse(res, user, 201);
   } catch (err) {

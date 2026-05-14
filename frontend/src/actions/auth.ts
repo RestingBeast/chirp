@@ -69,3 +69,15 @@ export async function logoutAction() {
 
   redirect("/login");
 }
+
+export async function validateInviteAction(token: string) {
+  try {
+    const data = await serverApiClient.get(`/invites/${token}`);
+    return { success: true, email: data.email };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Invite link is invalid or has expired",
+    };
+  }
+}

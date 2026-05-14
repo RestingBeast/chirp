@@ -5,7 +5,7 @@ export const registerSchema = z.object({
   name: nameField,
   email: emailField,
   password: passwordField,
-  inviteToken: z.string().trim().optional(),
+  inviteToken: z.string().trim().min(1),
 });
 
 export const loginSchema = z.object({
