@@ -108,16 +108,3 @@ export async function login(req, res) {
     });
   }
 }
-
-// ─── POST /auth/logout ────────────────────────────────────────────────────────
-export async function logout(req, res) {
-  res.cookie("token", "none", {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-
-  res.status(200).json({
-    success: true,
-    message: "Logged out successfully",
-  });
-}

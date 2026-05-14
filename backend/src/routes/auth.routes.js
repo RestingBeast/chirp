@@ -12,9 +12,4 @@ router.post("/register", validate(registerSchema), register);
 // POST /auth/login
 router.post("/login", validate(loginSchema), login);
 
-// Remove Later
-router.get("/test", protect, (req, res) => {
-  res.send("Hello, World");
-});
-
 export default router;

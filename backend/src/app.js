@@ -3,6 +3,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import { generalLimiter } from "./middlewares/rateLimiter.js";
 import authRouter from "./routes/auth.routes.js";
+import inviteRouter from "./routes/invite.routes.js";
 import dns from "node:dns";
 
 // Using Google Public DNS
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(generalLimiter);
 
 app.use("/api/auth", authRouter);
+app.use("/api/invites", inviteRouter);
 
 app.listen(port, () => {
   console.log(`Backend running on port ${port}`);
