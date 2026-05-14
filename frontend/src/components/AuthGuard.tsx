@@ -19,16 +19,16 @@ export default async function AuthGuard({
     redirect("/login");
   }
 
+  let decoded: any;
+  try {
+    decoded = jwtDecode(token);
+  } catch {
+    redirect("/login");
+  }
+
   // 2. Optional: Basic role check if encoded in JWT
-  if (requireAdmin) {
-    try {
-      const decoded: any = jwtDecode(token);
-      if (decoded.role !== "admin") {
-        redirect("/dashboard");
-      }
-    } catch {
-      redirect("/login");
-    }
+  if (requireAdmin && decoded.role !== "admin") {
+    redirect("/dashboard");
   }
 
   return <>{children}</>;
