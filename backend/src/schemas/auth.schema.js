@@ -1,0 +1,16 @@
+import { z } from "zod";
+import { emailField, nameField, passwordField } from "./common.schema.js";
+
+export const registerSchema = z.object({
+  name: nameField,
+  email: emailField,
+  password: passwordField,
+  inviteToken: z.string().trim().optional(),
+});
+
+export const loginSchema = z.object({
+  email: emailField,
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(1, "Password is required"), // no extra rules — avoids leaking policy info
+});
