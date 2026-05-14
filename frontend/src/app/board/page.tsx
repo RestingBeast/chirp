@@ -4,15 +4,26 @@ import { getTeamBoardAction } from "@/actions/standups";
 import { redirect } from "next/navigation";
 import BoardClientUI from "./BoardClientUI"; // We'll move your UI here
 
-export default async function TeamBoardPage() {
+interface TeamBoardPageProps {
+  searchParams: Promise<{ teamId?: string }>;
+}
+
+export default async function TeamBoardPage({
+  searchParams,
+}: TeamBoardPageProps) {
+  const { teamId } = await searchParams;
   const session = await getServerSession();
 
   // Redirect if not logged in or doesn't have a team yet
   if (!session) redirect("/login");
-  if (!session.teamId) redirect("/onboarding");
+  const effectiveTeamId = teamId || session?.teamId;
+
+  if (!effectiveTeamId) {
+    redirect(session?.role === "admin" ? "/admin/dashboard" : "/onboarding");
+  }
 
   // Fetch the data on the server using the teamId from the session
-  const { standups, date } = await getTeamBoardAction(session.teamId);
+  const { standups, date } = await getTeamBoardAction(effectiveTeamId);
 
   return (
     <AuthGuard>

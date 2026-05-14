@@ -1,6 +1,13 @@
 import { cookies } from "next/headers";
 import { jwtDecode } from "jwt-decode";
 
+type Payload = {
+  id: string;
+  email: string;
+  role: "member" | "admin";
+  teamId: string;
+};
+
 export async function getServerSession() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
@@ -8,7 +15,7 @@ export async function getServerSession() {
   if (!token) return null;
 
   try {
-    const decoded: any = jwtDecode(token);
+    const decoded: Payload = jwtDecode(token);
     return {
       id: decoded.id,
       email: decoded.email,
