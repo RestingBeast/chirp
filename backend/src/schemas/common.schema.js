@@ -18,3 +18,7 @@ export const nameField = z
   .trim()
   .min(2, "Name must be at least 2 characters")
   .max(64, "Name must be at most 64 characters");
+
+export const teamField = z
+  .string()
+  .regex(/^[0-9a-fA-F]{24}$/, "Invalid Team ID");

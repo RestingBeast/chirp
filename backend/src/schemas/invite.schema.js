@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emailField } from "./common.schema.js";
+import { emailField, teamField } from "./common.schema.js";
 
 export const createInviteSchema = z.object({
   // Reuse your standardized email validation
@@ -13,8 +13,5 @@ export const createInviteSchema = z.object({
     .default("member"),
 
   // Ensures teamId is a valid MongoDB ObjectId string (24 hex characters)
-  teamId: z
-    .string()
-    .regex(/^[0-9a-fA-F]{24}$/, "Invalid Team ID format")
-    .min(1),
+  teamId: teamField,
 });
