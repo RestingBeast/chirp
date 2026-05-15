@@ -27,11 +27,27 @@ export async function assignUserAction({
       success: true,
       message: response.data.message,
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Failed to assign user.");
+    return { success: false, message: msg };
+  }
+}
+
+export async function getTeamMembersAction(teamId: string) {
+  try {
+    const response = await serverApiClient.get(`/api/teams/${teamId}/members`);
     return {
-      success: false,
-      message:
-        error.response?.data?.message || "Failed to assign user to team.",
+      success: true,
+      members: response.data,
     };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Failed to load members");
+    return { success: false, message: msg };
   }
 }

@@ -1,6 +1,7 @@
 import AuthGuard from "@/components/AuthGuard";
 import { getServerSession } from "@/lib/session";
 import { getTeamBoardAction } from "@/actions/standups";
+import { getTeamMembersAction } from "@/actions/teams";
 import { redirect } from "next/navigation";
 import BoardClientUI from "./BoardClientUI"; // We'll move your UI here
 
@@ -29,6 +30,7 @@ export default async function TeamBoardPage({
     digest,
   } = await getTeamBoardAction(effectiveTeamId, date);
 
+  const { members } = await getTeamMembersAction(effectiveTeamId);
   return (
     <AuthGuard>
       <main className="p-6">
@@ -38,6 +40,7 @@ export default async function TeamBoardPage({
           date={date ?? fetchDate}
           teamId={effectiveTeamId}
           digest={digest}
+          members={members ?? []}
         />
       </main>
     </AuthGuard>

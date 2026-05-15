@@ -49,7 +49,7 @@ export async function getTeamStandups(req, res) {
     // 1. Run both queries in parallel for better performance
     const [standups, digest] = await Promise.all([
       Standup.find({ teamId, date, createdAt: { $gte: start, $lte: end } })
-        .populate("userId", "name email")
+        .populate("userId", "_id name email")
         .sort({ createdAt: 1 }),
       Digest.findOne({ teamId, date }),
     ]);

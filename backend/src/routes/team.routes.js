@@ -3,6 +3,7 @@ import {
   createTeam,
   getMyTeams,
   deleteEmptyTeam,
+  getTeamMembers,
 } from "../controllers/team.controller.js";
 import { protect, requireRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
@@ -36,5 +37,12 @@ router.get("/", protect, requireRole("admin"), getMyTeams);
  * @access  Private
  */
 router.delete("/:teamId", protect, requireRole("admin"), deleteEmptyTeam);
+
+/**
+ * @route   GET /api/teams/:teamId/member
+ * @desc
+ * @access  Private
+ */
+router.get("/:teamId/members", protect, getTeamMembers);
 
 export default router;

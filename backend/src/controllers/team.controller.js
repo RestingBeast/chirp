@@ -23,6 +23,29 @@ export async function createTeam(req, res) {
   }
 }
 
+// controllers/team.controller.js
+
+export const getTeamMembers = async (req, res) => {
+  try {
+    const { teamId } = req.params;
+
+    // Fetch users assigned to this team
+    const members = await User.find({ teamId })
+      .select("_id name email role") // Only return necessary fields
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: members,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch team members",
+    });
+  }
+};
+
 export async function getMyTeams(req, res) {
   const teams = await Team.find({ adminId: req.user.sub }).populate(
     "adminId",

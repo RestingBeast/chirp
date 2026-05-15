@@ -27,12 +27,19 @@ import {
   ArrowLeft,
   Plus,
   CalendarIcon,
+  Users,
 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { generateTeamDigestAction } from "@/actions/admin";
 import { toast } from "sonner";
 import Link from "next/link";
+import { User } from "@/types/user.types";
+import { cn } from "@/lib/utils";
+
+type Member = User & {
+  hasSubmitted: boolean;
+};
 
 interface Standup {
   _id: string;
@@ -41,6 +48,7 @@ interface Standup {
   blockers: string;
   createdAt: string;
   userId: {
+    _id: string;
     name: string;
     email: string;
   };
@@ -55,6 +63,7 @@ interface BoardClientUIProps {
   initialStandups: Standup[];
   date: string;
   teamId: string;
+  members: User[];
   digest?: Digest;
 }
 
@@ -69,6 +78,7 @@ export default function BoardClientUI({
   initialStandups,
   date,
   teamId,
+  members,
   digest,
 }: BoardClientUIProps) {
   const user = useAuthStore((s) => s.user);
@@ -77,6 +87,16 @@ export default function BoardClientUI({
     timeZone: "Asia/Singapore",
   });
   const isEarlier = date < todaySG;
+
+  const completionStatus = members.map((member) => {
+    const hasSubmitted = initialStandups.some(
+      (s) => s.userId._id === member._id,
+    );
+    return {
+      ...member,
+      hasSubmitted,
+    };
+  });
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -225,6 +245,39 @@ export default function BoardClientUI({
           </CardFooter>
         </Card>
       )}
+
+      {/* 2.5 Completion Checklist Section */}
+      <Card className="mb-8">
+        <CardHeader className="py-4">
+          <CardTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+            <Users className="w-4 h-4 text-primary" />
+            Submission Status
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            {completionStatus.map((member: Member) => (
+              <Badge
+                key={member._id}
+                variant="outline"
+                className={cn(
+                  "pl-1 h-8 pr-3 py-1 flex items-center gap-2 transition-all",
+                  member.hasSubmitted
+                    ? "bg-green-50 text-green-700 border-green-200"
+                    : "bg-muted/50 text-muted-foreground border-dashed",
+                )}
+              >
+                {member.hasSubmitted ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                ) : (
+                  <Clock className="w-3.5 h-3.5" />
+                )}
+                <span className="font-medium">{member.name}</span>
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* 4. Grid of Standup Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
