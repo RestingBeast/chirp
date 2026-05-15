@@ -6,7 +6,7 @@ import {
   authRouter,
   inviteRouter,
   teamRouter,
-  standupRoutesr,
+  standupRouter,
   userRouter,
 } from "./routes/index.js";
 import dns from "node:dns";
@@ -32,7 +32,7 @@ app.use(generalLimiter);
 app.use("/api/auth", authRouter);
 app.use("/api/invites", inviteRouter);
 app.use("/api/teams", teamRouter);
-app.use("/api/standups", standupRoutesr);
+app.use("/api/standups", standupRouter);
 app.use("/api/users", userRouter);
 
 app.listen(port, () => {

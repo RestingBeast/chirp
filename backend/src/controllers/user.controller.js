@@ -43,7 +43,6 @@ export const assignUserToTeam = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { teamId: teamId === "none" || !teamId ? null : teamId },
-      { role: "member" },
       { returnDocument: "after", runValidators: true },
     );
 
