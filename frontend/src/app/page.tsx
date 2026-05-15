@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Zap, ShieldCheck } from "lucide-react";
+import { getServerSession } from "@/lib/session";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const session = await getServerSession();
+
   return (
     <div className="flex flex-col min-h-[calc(100vh-3.5rem)]">
       {/* Hero Section */}
@@ -26,7 +29,7 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-            <Link href="/login">
+            <Link href={session ? "/board" : "/login"}>
               <Button
                 size="lg"
                 className="h-12 px-8 text-lg font-semibold group"

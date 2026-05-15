@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuthStore } from "@/store/authStore";
-import { logoutAction } from "@/actions/auth";
 import {
   Card,
   CardContent,
@@ -14,13 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
-  LogOut,
   AlertCircle,
   CheckCircle2,
   Clock,
   Sparkles,
   RefreshCw,
   ArrowLeft,
+  Plus,
 } from "lucide-react";
 import { useState } from "react";
 import { generateTeamDigestAction } from "@/actions/standups";
@@ -58,12 +57,6 @@ export default function BoardClientUI({
   digest,
 }: BoardClientUIProps) {
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
-
-  const handleLogout = async () => {
-    logout();
-    await logoutAction();
-  };
 
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -128,7 +121,7 @@ export default function BoardClientUI({
           <Separator orientation="vertical" className="h-10 hidden md:block" />
 
           {/* Generate Digest */}
-          {user?.role === "admin" && (
+          {user?.role === "admin" ? (
             <Button
               onClick={handleGenerateDigest}
               disabled={isGenerating || initialStandups.length === 0}
@@ -141,18 +134,18 @@ export default function BoardClientUI({
               )}
               {digest ? "Regenerate Digest" : "Generate AI Digest"}
             </Button>
+          ) : (
+            <Link href="/standup/new">
+              <Button
+                variant="outline"
+                size="lg"
+                className="text-muted-foreground hover:text-primary hover:bg-primary/5 border-dashed"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                New Standup
+              </Button>
+            </Link>
           )}
-
-          {/* Using a standard button size instead of ghost to give it more presence */}
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleLogout}
-            className="text-muted-foreground hover:text-destructive hover:bg-destructive/5 border-dashed"
-          >
-            <LogOut className="w-5 h-5 mr-2" />
-            Sign Out
-          </Button>
         </div>
       </div>
 

@@ -66,7 +66,7 @@ export async function logoutAction() {
     expires: new Date(0),
   });
 
-  redirect("/login");
+  redirect("/");
 }
 
 export async function validateInviteAction(token: string) {

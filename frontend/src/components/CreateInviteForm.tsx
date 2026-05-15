@@ -84,7 +84,7 @@ export default function CreateInviteForm({ teams }: CreateInviteFormProps) {
 
         <Button
           variant="ghost"
-          size="sm"
+          size="lg"
           className="w-full"
           onClick={() => setInviteLink(null)}
         >
