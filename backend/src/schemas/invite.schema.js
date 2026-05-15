@@ -13,5 +13,5 @@ export const createInviteSchema = z.object({
     .default("member"),
 
   // Ensures teamId is a valid MongoDB ObjectId string (24 hex characters)
-  teamId: teamField,
+  teamId: teamField.optional(),
 });

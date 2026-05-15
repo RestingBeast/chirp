@@ -47,7 +47,6 @@ export async function registerAction(payload: any) {
 
     return { success: true, user: data.user };
   } catch (error: any) {
-    // If your backend returns Zod errors as an array, pass them through
     return {
       success: false,
       message: error.message || "Registration failed",

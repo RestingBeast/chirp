@@ -24,7 +24,7 @@ export async function createInvite(req, res) {
     // The nanoid token and default expiresAt are handled by the model
     const invite = await Invite.create({
       email: email.toLowerCase(),
-      role: role || "user",
+      role: role || "member",
       teamId: teamId || null,
     });
 

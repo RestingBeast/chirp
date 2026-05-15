@@ -8,11 +8,24 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import {
+  LogOut,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Sparkles,
+  RefreshCw,
+  ArrowLeft,
+} from "lucide-react";
+import { useState } from "react";
+import { generateTeamDigestAction } from "@/actions/standups";
+import { toast } from "sonner";
+import Link from "next/link";
 
 interface Standup {
   _id: string;
@@ -26,13 +39,24 @@ interface Standup {
   };
 }
 
+interface Digest {
+  summary: string;
+  generatedAt: string;
+}
+
+interface BoardClientUIProps {
+  initialStandups: Standup[];
+  date: string;
+  teamId: string;
+  digest?: Digest;
+}
+
 export default function BoardClientUI({
   initialStandups,
   date,
-}: {
-  initialStandups: Standup[];
-  date: string;
-}) {
+  teamId,
+  digest,
+}: BoardClientUIProps) {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
 
@@ -41,20 +65,51 @@ export default function BoardClientUI({
     await logoutAction();
   };
 
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerateDigest = async () => {
+    setIsGenerating(true);
+
+    const result = await generateTeamDigestAction(teamId);
+
+    if (result.success) {
+      toast.success("Digest Generated!", { position: "top-center" });
+    } else {
+      toast.error(result.message, { position: "top-center" });
+    }
+
+    setIsGenerating(false);
+  };
+
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-card p-8 rounded-xl border shadow-sm">
+      {/* 1. Back Button - Moved OUTSIDE and ABOVE the card */}
+      {user?.role === "admin" && (
+        <div className="ml-2 mb-4">
+          <Link href="/admin/dashboard">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-ml-2 h-8 text-muted-foreground hover:text-primary transition-all group font-medium"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+              Back to Admin Console
+            </Button>
+          </Link>
+        </div>
+      )}
+      {/* 2. Header Section */}
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 bg-card p-8 rounded-xl border shadow-sm">
         {/* Left Side: Stays the same, but p-8 gives it more breathing room */}
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">
             Team Standup Board
           </h1>
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="ml-1 text-sm font-medium text-muted-foreground">
             Showing updates for{" "}
             <span className="text-foreground font-semibold">{date}</span>
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="ml-1 text-xs text-muted-foreground">
             Logged in as <span className="text-foreground">{user?.name}</span>
           </p>
         </div>
@@ -72,6 +127,22 @@ export default function BoardClientUI({
 
           <Separator orientation="vertical" className="h-10 hidden md:block" />
 
+          {/* Generate Digest */}
+          {user?.role === "admin" && (
+            <Button
+              onClick={handleGenerateDigest}
+              disabled={isGenerating || initialStandups.length === 0}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all"
+            >
+              {isGenerating ? (
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Sparkles className="w-4 h-4 mr-2" />
+              )}
+              {digest ? "Regenerate Digest" : "Generate AI Digest"}
+            </Button>
+          )}
+
           {/* Using a standard button size instead of ghost to give it more presence */}
           <Button
             variant="outline"
@@ -85,7 +156,30 @@ export default function BoardClientUI({
         </div>
       </div>
 
-      {/* Grid of Standup Cards */}
+      {/* 3. Digest Card */}
+      {digest && (
+        <Card className="mb-8 border-none bg-linear-to-br from-indigo-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 shadow-inner">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+              <Sparkles className="w-5 h-5" />
+              <CardTitle className="text-sm font-bold uppercase tracking-wider">
+                AI Team Pulse
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg font-medium leading-relaxed italic text-slate-700 dark:text-slate-200">
+              "{digest.summary}"
+            </p>
+          </CardContent>
+          <CardFooter className="text-[10px] text-muted-foreground flex justify-between items-center border-t border-indigo-100/50 dark:border-slate-700 mt-2 pt-4">
+            <span>Generated via Llama 3.3 (Groq)</span>
+            <span>{new Date(digest.generatedAt).toLocaleTimeString()}</span>
+          </CardFooter>
+        </Card>
+      )}
+
+      {/* 4. Grid of Standup Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {initialStandups.map((s) => (
           <Card

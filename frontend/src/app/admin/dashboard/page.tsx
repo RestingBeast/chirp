@@ -1,5 +1,5 @@
 import AuthGuard from "@/components/AuthGuard";
-import { getAdminTeamsAction } from "@/actions/team";
+import { getAdminTeamsAction } from "@/actions/teams";
 import AdminDashboard from "./AdminDashboard";
 
 export default async function TeamBoardPage() {

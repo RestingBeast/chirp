@@ -23,13 +23,18 @@ export default async function TeamBoardPage({
   }
 
   // Fetch the data on the server using the teamId from the session
-  const { standups, date } = await getTeamBoardAction(effectiveTeamId);
+  const { standups, date, digest } = await getTeamBoardAction(effectiveTeamId);
 
   return (
     <AuthGuard>
       <main className="p-6">
         {/* Pass the data down to your UI component */}
-        <BoardClientUI initialStandups={standups} date={date} />
+        <BoardClientUI
+          initialStandups={standups}
+          date={date}
+          teamId={effectiveTeamId}
+          digest={digest}
+        />
       </main>
     </AuthGuard>
   );

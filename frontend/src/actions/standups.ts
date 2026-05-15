@@ -11,7 +11,7 @@ export async function submitStandupAction(formData: {
 }) {
   try {
     const response = await serverApiClient.post("/api/standups", formData);
-    revalidatePath("/board"); // Refresh the team board data
+    revalidatePath("/board");
     return { success: true, data: response };
   } catch (error: any) {
     return {
@@ -27,8 +27,29 @@ export async function getTeamBoardAction(teamId: string) {
   try {
     // This calls your GET /api/standups/team/:teamId route
     const data = await serverApiClient.get(`/api/standups/team/${teamId}`);
-    return { success: true, standups: data.data, date: data.date };
+    return {
+      success: true,
+      standups: data.data,
+      date: data.date,
+      digest: data.digest,
+    };
   } catch (error: any) {
     return { success: false, message: "Failed to load team board" };
+  }
+}
+
+export async function generateTeamDigestAction(teamId: string) {
+  try {
+    const response = await serverApiClient.post("/api/standups/digest", {
+      teamId,
+    });
+
+    revalidatePath("/board");
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Server error during AI generation",
+    };
   }
 }

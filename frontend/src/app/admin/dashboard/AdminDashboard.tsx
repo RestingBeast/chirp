@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardHeader,
@@ -8,8 +10,19 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LayoutGrid, Users, ArrowRight, ShieldCheck } from "lucide-react";
+import { LayoutGrid, Users, ArrowRight, ShieldCheck, Plus } from "lucide-react";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import CreateTeamForm from "@/components/CreateTeamForm";
+import CreateInviteForm from "@/components/CreateInviteForm";
+import { useState } from "react";
 
 interface Team {
   _id: string;
@@ -27,10 +40,11 @@ interface AdminDashboardProps {
   success: boolean;
 }
 
-export default async function AdminDashboard({
+export default function AdminDashboard({
   teams,
   success,
 }: AdminDashboardProps) {
+  const [open, setOpen] = useState(false);
   return (
     <main className="p-8 max-w-6xl mx-auto space-y-10">
       {/* Header Section */}
@@ -47,9 +61,56 @@ export default async function AdminDashboard({
             Manage your teams and view their real-time standup performance.
           </p>
         </div>
-        <Button size="lg" className="shadow-sm">
-          Create New Team
-        </Button>
+
+        <div className="flex gap-3">
+          {/* Create Invite Dialog */}
+          <Dialog>
+            <DialogTrigger
+              className="inline-flex items-center justify-center rounded-md 
+                text-sm font-medium ring-offset-background transition-colors 
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                focus-visible:ring-offset-2 disabled:pointer-events-none 
+                disabled:opacity-50 border border-input bg-background hover:bg-accent
+                hover:text-accent-foreground px-4 h-8 shadow-sm"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Create Invite
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-106.25">
+              <DialogHeader>
+                <DialogTitle>Generate Invite</DialogTitle>
+                <DialogDescription>
+                  Create a secure access link for a specific team.
+                </DialogDescription>
+              </DialogHeader>
+              {/* Pass the teams fetched on the server to the client form */}
+              <CreateInviteForm teams={teams} />
+            </DialogContent>
+          </Dialog>
+
+          {/* Create Team Dialog */}
+          <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
+            <DialogTrigger
+              className="inline-flex items-center justify-center rounded-md text-sm 
+                font-medium ring-offset-background transition-colors focus-visible:outline-none
+                focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                disabled:pointer-events-none disabled:opacity-50 bg-primary 
+                text-primary-foreground hover:bg-primary/90 px-4 h-8 shadow-sm"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create New Team
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-106.25">
+              <DialogHeader>
+                <DialogTitle>Create Team</DialogTitle>
+                <DialogDescription>
+                  Give your new team a name to start tracking standups.
+                </DialogDescription>
+              </DialogHeader>
+              <CreateTeamForm onSuccess={() => setOpen(false)} />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Team Grid */}

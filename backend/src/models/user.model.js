@@ -31,8 +31,8 @@ const userSchema = new mongoose.Schema(
     },
     teamId: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: "Team",
+      default: null,
     },
   },
   {

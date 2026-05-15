@@ -2,6 +2,7 @@ import express from "express";
 import {
   submitStandup,
   getTeamStandups,
+  generateTeamDigest,
 } from "../controllers/standup.controller.js";
 import { protect } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
@@ -22,5 +23,12 @@ router.post("/", protect, validate(createStandupSchema), submitStandup);
  * @access  Private
  */
 router.get("/team/:teamId", protect, getTeamStandups);
+
+/**
+ * @route   GET /api/standups/team/:teamId
+ * @desc
+ * @access  Private
+ */
+router.post("/digest", generateTeamDigest);
 
 export default router;

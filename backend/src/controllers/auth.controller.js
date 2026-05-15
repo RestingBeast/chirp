@@ -83,7 +83,7 @@ export async function register(req, res) {
       email,
       passwordHash: password,
       role: invite.role || "member",
-      teamId: invite.teamId,
+      teamId: invite.teamId || null,
     });
 
     invite.used = true;
