@@ -52,7 +52,7 @@ export default function Navbar({ loggedIn = false }: NavBarProps) {
               <span className="hidden sm:inline">Sign Out</span>
             </Button>
           ) : (
-            <Link className="ml-auto" href="/login">
+            <Link href="/login">
               <Button
                 variant="ghost"
                 size="sm"
