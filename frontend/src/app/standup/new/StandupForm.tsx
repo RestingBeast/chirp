@@ -16,11 +16,29 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
 
 export default function StandupForm() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const [isLoading, setIsLoading] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+  const onTriggerSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsConfirmOpen(true); // Open the dialog instead of submitting immediately
+  };
 
   const [fields, setFields] = useState({
     yesterday: "",
@@ -36,8 +54,7 @@ export default function StandupForm() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleFinalSubmit = async () => {
     if (!user?.teamId) {
       toast.error("You are not assigned to a team.", {
         position: "top-center",
@@ -67,7 +84,7 @@ export default function StandupForm() {
           <CardTitle className="text-xl">Daily Standup</CardTitle>
           <CardDescription>Keep it brief, keep it useful.</CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={onTriggerSubmit}>
           <CardContent className="space-y-6">
             {/* Yesterday Section */}
             <div className="space-y-2">
@@ -126,9 +143,37 @@ export default function StandupForm() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Submitting..." : "Submit Standup"}
-            </Button>
+            <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+              <AlertDialogTrigger
+                type="submit"
+                disabled={isLoading || !fields.yesterday || !fields.today}
+                className="w-full inline-flex items-center justify-center gap-2 h-11 
+                  rounded-md bg-primary text-primary-foreground font-medium text-sm 
+                  shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50
+                  disabled:pointer-events-none"
+              >
+                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                Submit Standup
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Standups cannot be edited or deleted once recorded. Ensure
+                    your update is accurate.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Review</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleFinalSubmit}
+                    className="bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    Confirm & Post
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardFooter>
         </form>
       </Card>
