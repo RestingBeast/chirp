@@ -62,7 +62,7 @@ export default function AssignUserForm({
     }
     setLoading(false);
   }
-  console.log(users);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 py-4">
       {/* Searchable User Selection */}

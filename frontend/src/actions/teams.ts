@@ -28,7 +28,6 @@ export async function assignUserAction({
       message: response.data.message,
     };
   } catch (error: any) {
-    console.error("Assign User Action Error:", error);
     return {
       success: false,
       message:

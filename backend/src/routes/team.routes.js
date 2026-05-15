@@ -1,5 +1,9 @@
 import express from "express";
-import { createTeam, getMyTeams } from "../controllers/team.controller.js";
+import {
+  createTeam,
+  getMyTeams,
+  deleteEmptyTeam,
+} from "../controllers/team.controller.js";
 import { protect, requireRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 import { createTeamSchema } from "../schemas/team.schema.js";
@@ -25,5 +29,12 @@ router.post(
  * @access  Private
  */
 router.get("/", protect, requireRole("admin"), getMyTeams);
+
+/**
+ * @route   DELETE /api/teams/:teamId
+ * @desc
+ * @access  Private
+ */
+router.delete("/:teamId", protect, requireRole("admin"), deleteEmptyTeam);
 
 export default router;

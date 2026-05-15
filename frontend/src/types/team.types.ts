@@ -7,4 +7,5 @@ export type Team = {
     name: string;
   };
   createdAt: string;
+  memberCount?: number;
 };

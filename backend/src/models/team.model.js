@@ -12,4 +12,12 @@ const teamSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+teamSchema.post("findOneAndDelete", async function (doc) {
+  if (doc) {
+    const teamId = doc._id;
+    await mongoose.model("Standup").deleteMany({ teamId });
+    await mongoose.model("Digest").deleteMany({ teamId });
+  }
+});
+
 export default mongoose.model("Team", teamSchema);

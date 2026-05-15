@@ -33,6 +33,20 @@ import { useState } from "react";
 import AssignUserForm from "@/components/AssignUserForm";
 import { Team } from "@/types/team.types";
 import { User } from "@/types/user.types";
+import { Trash2, Loader2 } from "lucide-react"; // Add these imports
+import { deleteTeamAction } from "@/actions/admin"; // Import your new action
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface AdminDashboardProps {
   teams: Team[];
@@ -154,9 +168,49 @@ export default function AdminDashboard({
                   <div className="p-2.5 bg-muted rounded-xl group-hover:bg-primary/10 transition-colors">
                     <LayoutGrid className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
                   </div>
-                  <Badge variant="outline" className="text-[10px] font-bold">
-                    ID: {team._id.toString().slice(-4).toUpperCase()}
-                  </Badge>
+                  <div className="flex gap-2 items-center">
+                    {/* Show Delete Button only if memberCount is 0 */}
+                    {team?.memberCount === 0 && (
+                      <AlertDialog>
+                        <AlertDialogTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-md text-destructive hover:text-destructive hover:bg-destructive/10 transition-colors">
+                          <Trash2 className="w-4 h-4" />
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Delete {team.name}?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This team is empty. Deleting it will permanently
+                              remove all associated standup history and digests.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              onClick={async () => {
+                                const res = await deleteTeamAction(team._id);
+                                if (res.success)
+                                  toast.success("Team deleted", {
+                                    position: "bottom-center",
+                                  });
+                                else
+                                  toast.error(res.message, {
+                                    position: "bottom-center",
+                                  });
+                              }}
+                            >
+                              Delete Team
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                    <Badge variant="outline" className="text-[10px] font-bold">
+                      ID: {team._id.toString().slice(-4).toUpperCase()}
+                    </Badge>
+                  </div>
                 </div>
                 <CardTitle className="text-xl mt-4">{team.name}</CardTitle>
                 <CardDescription className="line-clamp-1">
