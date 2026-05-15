@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { jwtDecode } from "jwt-decode";
+import { jwtVerify } from "jose";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -21,7 +21,8 @@ export default async function AuthGuard({
 
   let decoded: any;
   try {
-    decoded = jwtDecode(token);
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    decoded = (await jwtVerify(token, secret)).payload;
   } catch {
     redirect("/login");
   }

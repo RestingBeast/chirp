@@ -73,8 +73,10 @@ export default function BoardClientUI({
 }: BoardClientUIProps) {
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
-  const isEarlier = new Date(date) < new Date();
-  console.log(isEarlier);
+  const todaySG = new Date().toLocaleDateString("en-CA", {
+    timeZone: "Asia/Singapore",
+  });
+  const isEarlier = date < todaySG;
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);

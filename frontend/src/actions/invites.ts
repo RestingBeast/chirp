@@ -17,10 +17,11 @@ export async function createInviteAction(formData: {
       formData,
     );
     return { success: true, url: response.data.joinLink };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: error.message || "Failed to create invites.",
-    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Failed to create invite.");
+    return { success: false, message: msg };
   }
 }

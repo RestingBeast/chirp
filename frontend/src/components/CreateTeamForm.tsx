@@ -18,7 +18,7 @@ export default function CreateTeamForm({ onSuccess }: CreateTeamFormProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function handleSubmit(e: React.SubmitEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
 

@@ -24,10 +24,11 @@ export async function createTeamAction(name: string) {
 
     const response = await serverApiClient.post("/api/teams", { name });
     return { success: true, teams: response.data };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: error.message || "Failed to create team.",
-    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Failed to create team.");
+    return { success: false, message: msg };
   }
 }

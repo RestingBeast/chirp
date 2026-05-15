@@ -22,11 +22,12 @@ export async function loginAction(formData: any) {
     });
 
     return { success: true, user: data.user };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: error.message || "Invalid email or password",
-    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Invalid email or password.");
+    return { success: false, message: msg };
   }
 }
 
@@ -34,24 +35,23 @@ export async function registerAction(payload: any) {
   try {
     const data = await serverApiClient.post("/api/auth/register", payload);
 
-    const expirationDays = Number(process.env.TOKEN_EXPIRATION);
+    const maxDays = Number(process.env.COOKIE_MAX_DAYS);
     const cookieStore = await cookies();
     cookieStore.set("token", data.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge:
-        60 * 60 * 24 * (Number.isNaN(expirationDays) ? 7 : expirationDays),
+      maxAge: 60 * 60 * 24 * (Number.isNaN(maxDays) ? 7 : maxDays),
     });
 
     return { success: true, user: data.user };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: error.message || "Registration failed",
-      errors: error.errors,
-    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Registration failed.");
+    return { success: false, message: msg };
   }
 }
 
@@ -73,10 +73,11 @@ export async function validateInviteAction(token: string) {
   try {
     const data = await serverApiClient.get(`/api/invites/${token}`);
     return { success: true, email: data.email };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: error.message || "Invite link is invalid or has expired",
-    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Invite invalid or expired.");
+    return { success: false, message: msg };
   }
 }

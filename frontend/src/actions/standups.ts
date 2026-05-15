@@ -13,13 +13,13 @@ export async function submitStandupAction(formData: {
     const response = await serverApiClient.post("/api/standups", formData);
     revalidatePath("/board");
     return { success: true, data: response };
-  } catch (error: any) {
-    return {
-      success: false,
-      message:
-        error.message ||
-        "Failed to submit standup. You might have already posted today.",
-    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ??
+          "Failed to submit standup. You might have already posted today.");
+    return { success: false, message: msg };
   }
 }
 
@@ -41,7 +41,7 @@ export async function getTeamBoardAction(teamId: string, date?: string) {
       digest: data.digest,
     };
   } catch (error: any) {
-    return { success: false, message: "Failed to load team board" };
+    return { success: false, message: "Failed to load team board." };
   }
 }
 
@@ -52,10 +52,11 @@ export async function generateTeamDigestAction(teamId: string) {
     });
     revalidatePath("/board");
     return { success: true, data: response.data };
-  } catch (error: any) {
-    return {
-      success: false,
-      message: error.message || "Server error during AI generation",
-    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Server Error during AI generation.");
+    return { success: false, message: msg };
   }
 }

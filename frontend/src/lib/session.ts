@@ -1,12 +1,5 @@
 import { cookies } from "next/headers";
-import { jwtDecode } from "jwt-decode";
-
-type Payload = {
-  id: string;
-  email: string;
-  role: "member" | "admin";
-  teamId: string;
-};
+import { jwtVerify } from "jose";
 
 export async function getServerSession() {
   const cookieStore = await cookies();
@@ -15,12 +8,13 @@ export async function getServerSession() {
   if (!token) return null;
 
   try {
-    const decoded: Payload = jwtDecode(token);
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret);
     return {
-      id: decoded.id,
-      email: decoded.email,
-      role: decoded.role,
-      teamId: decoded.teamId,
+      id: payload.id,
+      email: payload.email,
+      role: payload.role,
+      teamId: payload.teamId,
     };
   } catch {
     return null;

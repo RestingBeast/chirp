@@ -33,7 +33,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Navbar loggedIn={session ? true : false} />
-        <main>{children}</main>
+        <div>{children}</div>
         <Toaster />
       </body>
     </html>

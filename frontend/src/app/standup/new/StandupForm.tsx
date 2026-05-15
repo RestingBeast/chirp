@@ -36,7 +36,7 @@ export default function StandupForm() {
     }
   };
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user?.teamId) {
       toast.error("You are not assigned to a team.", {

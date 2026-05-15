@@ -30,7 +30,7 @@ export default function CreateInviteForm({ teams }: CreateInviteFormProps) {
   const [loading, setLoading] = useState(false);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.SubmitEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
 

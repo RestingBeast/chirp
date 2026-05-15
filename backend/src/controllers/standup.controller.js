@@ -43,9 +43,12 @@ export async function getTeamStandups(req, res) {
         timeZone: "Asia/Singapore",
       });
 
+    const start = new Date(`${date}T00:00:00+08:00`);
+    const end = new Date(`${date}T23:59:59+08:00`);
+
     // 1. Run both queries in parallel for better performance
     const [standups, digest] = await Promise.all([
-      Standup.find({ teamId, date })
+      Standup.find({ teamId, date, createdAt: { $gte: start, $lte: end } })
         .populate("userId", "name email")
         .sort({ createdAt: 1 }),
       Digest.findOne({ teamId, date }),

@@ -4,9 +4,10 @@ import {
   getTeamStandups,
   generateTeamDigest,
 } from "../controllers/standup.controller.js";
-import { protect } from "../middlewares/auth.js";
+import { protect, requireRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 import { createStandupSchema } from "../schemas/standup.schema.js";
+import { generalLimiter } from "../middlewares/rateLimiter.js";
 
 const router = express.Router();
 
@@ -29,6 +30,12 @@ router.get("/team/:teamId", protect, getTeamStandups);
  * @desc
  * @access  Private
  */
-router.post("/digest", generateTeamDigest);
+router.post(
+  "/digest",
+  protect,
+  requireRole("admin"),
+  generalLimiter,
+  generateTeamDigest,
+);
 
 export default router;
