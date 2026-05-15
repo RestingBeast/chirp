@@ -23,10 +23,17 @@ export async function submitStandupAction(formData: {
   }
 }
 
-export async function getTeamBoardAction(teamId: string) {
+export async function getTeamBoardAction(teamId: string, date?: string) {
   try {
-    // This calls your GET /api/standups/team/:teamId route
-    const data = await serverApiClient.get(`/api/standups/team/${teamId}`);
+    // Build URL — append ?date=YYYY-MM-DD only when explicitly provided
+    const params = new URLSearchParams();
+    if (date) params.set("date", date);
+    const query = params.size > 0 ? `?${params.toString()}` : "";
+
+    const data = await serverApiClient.get(
+      `/api/standups/team/${teamId}${query}`,
+    );
+
     return {
       success: true,
       standups: data.data,
@@ -43,7 +50,6 @@ export async function generateTeamDigestAction(teamId: string) {
     const response = await serverApiClient.post("/api/standups/digest", {
       teamId,
     });
-
     revalidatePath("/board");
     return { success: true, data: response.data };
   } catch (error: any) {

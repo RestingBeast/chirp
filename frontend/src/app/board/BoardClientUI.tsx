@@ -13,6 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import {
   AlertCircle,
   CheckCircle2,
   Clock,
@@ -20,8 +26,10 @@ import {
   RefreshCw,
   ArrowLeft,
   Plus,
+  CalendarIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { generateTeamDigestAction } from "@/actions/standups";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -50,6 +58,13 @@ interface BoardClientUIProps {
   digest?: Digest;
 }
 
+// Format a Date object to "YYYY-MM-DD" in Singapore time
+function toSGDateString(date: Date): string {
+  return date.toLocaleDateString("en-CA", {
+    timeZone: "Asia/Singapore",
+  });
+}
+
 export default function BoardClientUI({
   initialStandups,
   date,
@@ -57,26 +72,46 @@ export default function BoardClientUI({
   digest,
 }: BoardClientUIProps) {
   const user = useAuthStore((s) => s.user);
+  const router = useRouter();
+  const isEarlier = new Date(date) < new Date();
+  console.log(isEarlier);
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
+  // Parse the incoming date string into a Date object for the Calendar
+  // Using noon UTC to avoid timezone-shifting the date to the day before
+  const selectedDate = date ? new Date(`${date}T12:00:00Z`) : new Date();
 
   const handleGenerateDigest = async () => {
     setIsGenerating(true);
-
     const result = await generateTeamDigestAction(teamId);
-
     if (result.success) {
       toast.success("Digest Generated!", { position: "top-center" });
     } else {
       toast.error(result.message, { position: "top-center" });
     }
-
     setIsGenerating(false);
+  };
+
+  const handleDateSelect = (picked: Date | undefined) => {
+    if (!picked) return;
+
+    const formatted = toSGDateString(picked);
+    const params = new URLSearchParams({ date: formatted });
+
+    // Only append teamId for admins
+    if (user?.role === "admin" && teamId) {
+      params.set("teamId", teamId);
+    }
+
+    setCalendarOpen(false);
+    router.replace(`/board?${params.toString()}`);
   };
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      {/* 1. Back Button - Moved OUTSIDE and ABOVE the card */}
+      {/* 1. Back Button */}
       {user?.role === "admin" && (
         <div className="ml-2 mb-4">
           <Link href="/admin/dashboard">
@@ -91,25 +126,43 @@ export default function BoardClientUI({
           </Link>
         </div>
       )}
+
       {/* 2. Header Section */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 bg-card p-8 rounded-xl border shadow-sm">
-        {/* Left Side: Stays the same, but p-8 gives it more breathing room */}
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">
             Team Standup Board
           </h1>
-          <p className="ml-1 text-sm font-medium text-muted-foreground">
-            Showing updates for{" "}
-            <span className="text-foreground font-semibold">{date}</span>
-          </p>
+
+          {/* Clickable date — opens calendar popover */}
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger className="ml-1">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group">
+                <CalendarIcon className="w-3.5 h-3.5 group-hover:text-primary transition-colors" />
+                Showing updates for{" "}
+                <span className="text-foreground font-semibold underline underline-offset-4 decoration-dashed decoration-muted-foreground/50 group-hover:decoration-primary transition-colors">
+                  {date}
+                </span>
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                // Prevent selecting future dates
+                disabled={(d: Date) => d > new Date()}
+              />
+            </PopoverContent>
+          </Popover>
+
           <p className="ml-1 text-xs text-muted-foreground">
             Logged in as <span className="text-foreground">{user?.name}</span>
           </p>
         </div>
 
-        {/* Right Side: Scaled and Centered */}
+        {/* Right Side */}
         <div className="flex items-center gap-4">
-          {/* Increased padding and text size for the Badge */}
           <Badge
             variant="secondary"
             className="px-8 py-4 text-sm font-semibold bg-green-50 text-green-700 border-green-200"
@@ -120,7 +173,6 @@ export default function BoardClientUI({
 
           <Separator orientation="vertical" className="h-10 hidden md:block" />
 
-          {/* Generate Digest */}
           {user?.role === "admin" ? (
             <Button
               onClick={handleGenerateDigest}
@@ -233,15 +285,16 @@ export default function BoardClientUI({
           </Card>
         ))}
 
-        {/* Empty State */}
         {initialStandups.length === 0 && (
           <div className="col-span-full py-24 flex flex-col items-center justify-center border-2 border-dashed rounded-2xl bg-muted/20">
             <Clock className="w-12 h-12 text-muted-foreground/40 mb-4" />
             <h3 className="text-lg font-medium text-muted-foreground">
-              No standups posted yet
+              No standups posted {!isEarlier && "yet"}
             </h3>
             <p className="text-sm text-muted-foreground/60">
-              The team is still brewing their coffee...
+              {isEarlier
+                ? "No updates were shared on this day."
+                : "The team is still brewing their coffee..."}
             </p>
           </div>
         )}

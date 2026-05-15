@@ -5,13 +5,13 @@ import { redirect } from "next/navigation";
 import BoardClientUI from "./BoardClientUI"; // We'll move your UI here
 
 interface TeamBoardPageProps {
-  searchParams: Promise<{ teamId?: string }>;
+  searchParams: Promise<{ teamId?: string; date?: string }>;
 }
 
 export default async function TeamBoardPage({
   searchParams,
 }: TeamBoardPageProps) {
-  const { teamId } = await searchParams;
+  const { teamId, date } = await searchParams;
   const session = await getServerSession();
 
   // Redirect if not logged in or doesn't have a team yet
@@ -23,7 +23,11 @@ export default async function TeamBoardPage({
   }
 
   // Fetch the data on the server using the teamId from the session
-  const { standups, date, digest } = await getTeamBoardAction(effectiveTeamId);
+  const {
+    standups,
+    date: fetchDate,
+    digest,
+  } = await getTeamBoardAction(effectiveTeamId, date);
 
   return (
     <AuthGuard>
@@ -31,7 +35,7 @@ export default async function TeamBoardPage({
         {/* Pass the data down to your UI component */}
         <BoardClientUI
           initialStandups={standups}
-          date={date}
+          date={date ?? fetchDate}
           teamId={effectiveTeamId}
           digest={digest}
         />
