@@ -6,15 +6,21 @@ export const generalLimiter = rateLimit({
   max: 100, // 100 requests per IP per window
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Too many requests. Please try again later.",
+  message: {
+    success: false,
+    message: "Too many requests. Please try again later.",
+  },
 });
 
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 1 hour
-  max: 1, // 5 generations per IP per hour
+  windowMs: 15 * 60 * 1000,
+  max: 15,
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Authentication limit reached. Please wait before trying again.",
+  message: {
+    success: false,
+    message: "Authentication limit reached. Please wait before trying again.",
+  },
 });
 
 export const generateLimiter = rateLimit({
@@ -22,5 +28,8 @@ export const generateLimiter = rateLimit({
   max: 5, // 5 generations per IP per hour
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Generation limit reached. Please wait before generating again.",
+  message: {
+    success: false,
+    message: "Generation limit reached. Please wait before generating again.",
+  },
 });
