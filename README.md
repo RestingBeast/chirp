@@ -24,8 +24,8 @@ Chirp is an invite-only standup board where team members post daily updates asyn
 **Admin flow:**
 
 1. Admin sign in and create a team.
-<img width="1920" height="985" alt="login" src="https://github.com/user-attachments/assets/3cae49c2-e93f-4bc5-b4c2-47afb788572c" />
 <img width="1920" height="1465" alt="landing" src="https://github.com/user-attachments/assets/e094a61c-80f8-4ce7-a342-9db0eddbc4b1" />
+<img width="1920" height="985" alt="login" src="https://github.com/user-attachments/assets/3cae49c2-e93f-4bc5-b4c2-47afb788572c" />
 <img width="1920" height="913" alt="create-team" src="https://github.com/user-attachments/assets/0550da6f-7810-4078-8398-c4fa4202dbb2" />
 2. Admin generates an invite link for a specific email address and team.
 3. Invitee receives the link, registers via `/join?token=...`, and is automatically assigned to the team.
