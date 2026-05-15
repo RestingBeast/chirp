@@ -31,7 +31,7 @@ export async function getTeamBoardAction(teamId: string, date?: string) {
     const query = params.size > 0 ? `?${params.toString()}` : "";
 
     const data = await serverApiClient.get(
-      `/api/standups/team/${teamId}${query}`,
+      `/api/standups/teams/${teamId}${query}`,
     );
 
     return {

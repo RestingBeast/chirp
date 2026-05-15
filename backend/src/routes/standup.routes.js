@@ -23,7 +23,7 @@ router.post("/", protect, validate(createStandupSchema), submitStandup);
  * @desc
  * @access  Private
  */
-router.get("/team/:teamId", protect, getTeamStandups);
+router.get("/teams/:teamId", protect, getTeamStandups);
 
 /**
  * @route   GET /api/standups/team/:teamId
