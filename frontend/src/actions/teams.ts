@@ -1,34 +1,38 @@
 "use server";
 
 import { serverApiClient } from "@/lib/apiClient.server";
-import { getServerSession } from "@/lib/session";
+import { revalidatePath } from "next/cache";
 
-export async function getAdminTeamsAction() {
+/**
+ * Server action to be called by the AssignUserForm.
+ */
+export async function assignUserAction({
+  userId,
+  teamId,
+}: {
+  userId: string;
+  teamId: string;
+}) {
   try {
-    // Calls your existing getMyTeams function through the API
-    const response = await serverApiClient.get("/api/teams");
-    return { success: true, teams: response.data };
+    // Calls the controller endpoint created above
+    const response = await serverApiClient.put("/api/users/assign", {
+      userId,
+      teamId,
+    });
+
+    // Refresh the dashboard to show updated team memberships
+    revalidatePath("/admin/dashboard");
+
+    return {
+      success: true,
+      message: response.data.message,
+    };
   } catch (error: any) {
+    console.error("Assign User Action Error:", error);
     return {
       success: false,
-      message: "Failed to load managed teams.",
+      message:
+        error.response?.data?.message || "Failed to assign user to team.",
     };
-  }
-}
-
-export async function createTeamAction(name: string) {
-  try {
-    const session = await getServerSession();
-    if (!session) throw new Error("Not authenticated");
-    if (session.role !== "admin") throw new Error("Forbidden");
-
-    const response = await serverApiClient.post("/api/teams", { name });
-    return { success: true, teams: response.data };
-  } catch (error: unknown) {
-    const msg =
-      error instanceof Error
-        ? error.message
-        : ((error as any)?.message ?? "Failed to create team.");
-    return { success: false, message: msg };
   }
 }

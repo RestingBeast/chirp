@@ -7,6 +7,7 @@ import {
   inviteRouter,
   teamRouter,
   standupRoutesr,
+  userRouter,
 } from "./routes/index.js";
 import dns from "node:dns";
 
@@ -32,6 +33,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/invites", inviteRouter);
 app.use("/api/teams", teamRouter);
 app.use("/api/standups", standupRoutesr);
+app.use("/api/users", userRouter);
 
 app.listen(port, () => {
   console.log(`Backend running on port ${port}`);

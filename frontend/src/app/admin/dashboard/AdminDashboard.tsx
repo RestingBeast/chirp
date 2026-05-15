@@ -10,7 +10,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LayoutGrid, Users, ArrowRight, ShieldCheck, Plus } from "lucide-react";
+import {
+  LayoutGrid,
+  Users,
+  ArrowRight,
+  ShieldCheck,
+  Plus,
+  UserPlus,
+} from "lucide-react";
 import Link from "next/link";
 import {
   Dialog,
@@ -23,27 +30,22 @@ import {
 import CreateTeamForm from "@/components/CreateTeamForm";
 import CreateInviteForm from "@/components/CreateInviteForm";
 import { useState } from "react";
-
-interface Team {
-  _id: string;
-  name: string;
-  adminId: {
-    _id: string;
-    email: string;
-    name: string;
-  };
-  createdAt: string;
-}
+import AssignUserForm from "@/components/AssignUserForm";
+import { Team } from "@/types/team.types";
+import { User } from "@/types/user.types";
 
 interface AdminDashboardProps {
   teams: Team[];
+  users: User[];
   success: boolean;
 }
 
 export default function AdminDashboard({
   teams,
+  users,
   success,
 }: AdminDashboardProps) {
+  const [assignOpen, setAssignOpen] = useState(false);
   const [open, setOpen] = useState(false);
   return (
     <main className="p-8 max-w-6xl mx-auto space-y-10">
@@ -63,6 +65,32 @@ export default function AdminDashboard({
         </div>
 
         <div className="flex gap-3">
+          <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
+            <DialogTrigger
+              className="inline-flex items-center justify-center rounded-md 
+                text-sm font-medium ring-offset-background transition-colors 
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                focus-visible:ring-offset-2 disabled:pointer-events-none 
+                disabled:opacity-50 border border-input bg-background hover:bg-accent
+                hover:text-accent-foreground px-4 h-8 shadow-sm"
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Assign User
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-106.25">
+              <DialogHeader>
+                <DialogTitle>Assign User</DialogTitle>
+                <DialogDescription>
+                  Search for an existing user to add or reassign them to a team.
+                </DialogDescription>
+              </DialogHeader>
+              <AssignUserForm
+                users={users} // You'll need to fetch all users in the server component
+                teams={teams}
+                onSuccess={() => setAssignOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
           {/* Create Invite Dialog */}
           <Dialog>
             <DialogTrigger

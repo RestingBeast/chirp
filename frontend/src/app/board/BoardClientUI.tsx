@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { generateTeamDigestAction } from "@/actions/standups";
+import { generateTeamDigestAction } from "@/actions/admin";
 import { toast } from "sonner";
 import Link from "next/link";
 

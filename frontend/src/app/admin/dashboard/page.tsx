@@ -1,9 +1,9 @@
 import AuthGuard from "@/components/AuthGuard";
-import { getAdminTeamsAction } from "@/actions/teams";
+import { getAdminDataAction } from "@/actions/admin";
 import AdminDashboard from "./AdminDashboard";
 
 export default async function TeamBoardPage() {
-  const { teams, success } = await getAdminTeamsAction();
+  const { success, teams, users } = await getAdminDataAction();
 
   if (!success)
     return (
@@ -14,7 +14,7 @@ export default async function TeamBoardPage() {
 
   return (
     <AuthGuard requireAdmin>
-      <AdminDashboard success={success} teams={teams} />
+      <AdminDashboard success={success} teams={teams} users={users} />
     </AuthGuard>
   );
 }

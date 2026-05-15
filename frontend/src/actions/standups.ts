@@ -44,19 +44,3 @@ export async function getTeamBoardAction(teamId: string, date?: string) {
     return { success: false, message: "Failed to load team board." };
   }
 }
-
-export async function generateTeamDigestAction(teamId: string) {
-  try {
-    const response = await serverApiClient.post("/api/standups/digest", {
-      teamId,
-    });
-    revalidatePath("/board");
-    return { success: true, data: response.data };
-  } catch (error: unknown) {
-    const msg =
-      error instanceof Error
-        ? error.message
-        : ((error as any)?.message ?? "Server Error during AI generation.");
-    return { success: false, message: msg };
-  }
-}

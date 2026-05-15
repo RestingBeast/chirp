@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
+import { User } from "@/types/auth.types";
 
 export async function getServerSession() {
   const cookieStore = await cookies();
@@ -9,7 +10,7 @@ export async function getServerSession() {
 
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    const { payload } = await jwtVerify(token, secret);
+    const { payload }: { payload: User } = await jwtVerify(token, secret);
     return {
       id: payload.id,
       email: payload.email,
