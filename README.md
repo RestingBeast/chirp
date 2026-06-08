@@ -13,7 +13,7 @@ Daily standup meetings are a coordination tax. For distributed or async-first te
 Chirp is an invite-only standup board where team members post daily updates asynchronously. An admin can trigger an AI digest that synthesises all updates into a concise team health summary — replacing the standup meeting entirely.
 
 - Team members post standups in under two minutes from any device.
-- Admins receive a 3-sentence AI-generated digest covering yesterday's progress, today's focus, and active blockers.
+- Admins can generate a 3-sentence AI-generated digest covering yesterday's progress, today's focus, and active blockers.
 - Historical standups are browsable by date via a calendar picker.
 - Role-based access control separates admin capabilities (team management, digest generation) from member capabilities (posting and editing standups).
 
@@ -108,7 +108,7 @@ Chirp is an invite-only standup board where team members post daily updates asyn
 
 ### AI Adapter Pattern
 
-Identical to Sonic-Self — the AI provider is resolved from an environment variable, and all providers implement the same `generateNarrative(prompt)` interface.
+The AI provider is resolved from an environment variable, and all providers implement the same `generateDigest(prompt)` interface.
 
 ```
 services/ai/
@@ -295,7 +295,6 @@ chirp/
 
 - The BFF (Backend for Frontend) pattern — having Next.js Server Actions sit between the browser and Express worked cleanly.
 - The browser never holds the JWT, the cookie is httpOnly, and Express only ever sees a Bearer token forwarded from a trusted server layer.
-- The invite-only registration flow with single-use, expiring tokens struck the right balance between security and usability for a small team tool.
 - Zod validation as Express middleware kept controllers clean
 - By the time a request reaches a handler, the input is already typed and sanitised due to zod's schema validation.
 
@@ -308,12 +307,11 @@ chirp/
 **Changes made during development:**
 
 - Removed `credentials: "include"` from the client-side fetch wrapper after switching to a Server Action-mediated cookie flow. This eliminated cross-origin cookie complexity entirely.
-- Moved role checks from client-side Zustand state (easily spoofed) to server-side `jose`-verified JWT payloads in `AuthGuard` and `session.ts`.
+- Moved role checks from client-side Zustand state that could be easily spoofed to server-side `jose`-verified JWT payloads in `AuthGuard` and `session.ts`.
 - Split `authLimiter` from `generalLimiter` to apply a much tighter rate limit specifically to login and register endpoints.
 
 **What was failing**
 
 - Some of the endpoints have ownership problems, a user could create standup in teams that they don't belong
-- Security headers are missing and should be added, realized it too late
-- Pages are bloated with similar components, should have made more shared components
-- Timezones are still really confusing
+- Some security headers are missing
+- Timezones is fixed to SGT
