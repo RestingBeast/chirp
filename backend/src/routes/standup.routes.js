@@ -7,7 +7,7 @@ import {
 import { protect, requireRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 import { createStandupSchema } from "../schemas/standup.schema.js";
-import { generalLimiter } from "../middlewares/rateLimiter.js";
+import { generateLimiter } from "../middlewares/rateLimiter.js";
 
 const router = express.Router();
 
@@ -34,7 +34,7 @@ router.post(
   "/digest",
   protect,
   requireRole("admin"),
-  generalLimiter,
+  generateLimiter,
   generateTeamDigest,
 );
 

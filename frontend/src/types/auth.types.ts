@@ -1,5 +1,5 @@
-export interface User {
-  id: string;
+export interface Payload {
+  sub: string;
   name: string;
   email: string;
   role: "admin" | "user";
@@ -7,7 +7,7 @@ export interface User {
 }
 
 export interface AuthState {
-  user: User | null;
+  user: Payload | null;
   token: string | null;
   isLoading: boolean;
   error: string | string[] | null;

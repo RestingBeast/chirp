@@ -10,14 +10,6 @@ if (!JWT_SECRET) {
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
-const ms = (val) => {
-  const unit = val.slice(-1);
-  const num = parseInt(val);
-  if (unit === "d") return num * 24 * 60 * 60 * 1000;
-  if (unit === "h") return num * 60 * 60 * 1000;
-  return 3600000; // Default 1h
-};
-
 function signToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }

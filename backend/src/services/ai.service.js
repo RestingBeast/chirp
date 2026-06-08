@@ -1,4 +1,4 @@
-import { generateNarrative } from "./ai/index.js";
+import { generateDigest } from "./ai/index.js";
 
 export async function createTeamDigest(standups) {
   if (!standups || standups.length === 0) return "No updates provided today.";

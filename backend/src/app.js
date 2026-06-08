@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import connectDB from "./config/db.js";
 import { generalLimiter } from "./middlewares/rateLimiter.js";
 import {
@@ -18,6 +19,8 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 connectDB();
+
+app.use(helmet());
 
 app.use(
   cors({

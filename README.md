@@ -24,26 +24,26 @@ Chirp is an invite-only standup board where team members post daily updates asyn
 **Admin flow:**
 
 1. Admin sign in and create a team.
-<img width="1920" height="1465" alt="landing" src="https://github.com/user-attachments/assets/e094a61c-80f8-4ce7-a342-9db0eddbc4b1" />
-<img width="1920" height="985" alt="login" src="https://github.com/user-attachments/assets/3cae49c2-e93f-4bc5-b4c2-47afb788572c" />
-<img width="1920" height="913" alt="create-team" src="https://github.com/user-attachments/assets/0550da6f-7810-4078-8398-c4fa4202dbb2" />
+   <img width="1920" height="1465" alt="landing" src="https://github.com/user-attachments/assets/e094a61c-80f8-4ce7-a342-9db0eddbc4b1" />
+   <img width="1920" height="985" alt="login" src="https://github.com/user-attachments/assets/3cae49c2-e93f-4bc5-b4c2-47afb788572c" />
+   <img width="1920" height="913" alt="create-team" src="https://github.com/user-attachments/assets/0550da6f-7810-4078-8398-c4fa4202dbb2" />
 2. Admin generates an invite link for a specific email address and team.
 3. Invitee receives the link, registers via `/join?token=...`, and is automatically assigned to the team.
-<img width="1920" height="913" alt="create-invite" src="https://github.com/user-attachments/assets/369fb351-97bf-49d7-a03a-16c4ffff08d2" />
-<img width="1920" height="913" alt="sucess-invite" src="https://github.com/user-attachments/assets/d07252dc-02fd-4ec9-871e-5beec14a540b" />
+   <img width="1920" height="913" alt="create-invite" src="https://github.com/user-attachments/assets/369fb351-97bf-49d7-a03a-16c4ffff08d2" />
+   <img width="1920" height="913" alt="sucess-invite" src="https://github.com/user-attachments/assets/d07252dc-02fd-4ec9-871e-5beec14a540b" />
 4. Admin can assign a member to a team.
-<img width="1920" height="913" alt="assign-user" src="https://github.com/user-attachments/assets/80305c18-12e0-4b66-bbbb-ef4d418c158d" />
+   <img width="1920" height="913" alt="assign-user" src="https://github.com/user-attachments/assets/80305c18-12e0-4b66-bbbb-ef4d418c158d" />
 5. Admin see all the teams he manage at the dashboard.
-<img width="1920" height="913" alt="admin-dashboard" src="https://github.com/user-attachments/assets/d2d5c98b-bf15-45c7-a246-f1311672b204" />
+   <img width="1920" height="913" alt="admin-dashboard" src="https://github.com/user-attachments/assets/d2d5c98b-bf15-45c7-a246-f1311672b204" />
 6. Admin views the board at `/board?teamId=...`, sees all submitted standups, and clicks **Generate AI Digest**.
-<img width="1920" height="1235" alt="admin-view-board" src="https://github.com/user-attachments/assets/af014f38-fb33-4586-b178-5f1b5c9980ac" />
+   <img width="1920" height="1235" alt="admin-view-board" src="https://github.com/user-attachments/assets/af014f38-fb33-4586-b178-5f1b5c9980ac" />
 7. Admin browse past dates via the calendar picker in the board header. (member can browse too)
-<img width="1920" height="1167" alt="view-calendar" src="https://github.com/user-attachments/assets/ca117d59-7168-4011-9929-bc6491e2c0b5" />
+   <img width="1920" height="1167" alt="view-calendar" src="https://github.com/user-attachments/assets/ca117d59-7168-4011-9929-bc6491e2c0b5" />
 8. Admin can create digest of the day by clicking the generate button. Member can only view the digest after it is generated.
-<img width="1920" height="1235" alt="create-digest" src="https://github.com/user-attachments/assets/d675fdd0-1c2e-4226-9f01-de63ad290e9f" />
+   <img width="1920" height="1235" alt="create-digest" src="https://github.com/user-attachments/assets/d675fdd0-1c2e-4226-9f01-de63ad290e9f" />
 9. Admin can delete empty teams from the admin dashboard.
-<img width="1920" height="913" alt="delete-team1" src="https://github.com/user-attachments/assets/4c0f7672-16d4-4d51-8f94-4593560d6f0c" />
-<img width="1920" height="913" alt="delete-team2" src="https://github.com/user-attachments/assets/d85f3fe7-04ec-4e7b-9e95-48fdd60f072b" />
+   <img width="1920" height="913" alt="delete-team1" src="https://github.com/user-attachments/assets/4c0f7672-16d4-4d51-8f94-4593560d6f0c" />
+   <img width="1920" height="913" alt="delete-team2" src="https://github.com/user-attachments/assets/d85f3fe7-04ec-4e7b-9e95-48fdd60f072b" />
 
 **Member flow:**
 
@@ -52,12 +52,12 @@ Chirp is an invite-only standup board where team members post daily updates asyn
 2. Member sees onboarding page if no team is assigned.
    <img width="1920" height="985" alt="onboarding" src="https://github.com/user-attachments/assets/a206208c-dbdd-4f0d-b80b-937ad5953b14" />
 3. Member can see team board after admin assign a team.
-<img width="1920" height="942" alt="user-view-board" src="https://github.com/user-attachments/assets/f4ecdbf1-b00e-4c5f-b393-815c7cc4c636" />
+   <img width="1920" height="942" alt="user-view-board" src="https://github.com/user-attachments/assets/f4ecdbf1-b00e-4c5f-b393-815c7cc4c636" />
 4. Member posts their daily standup at `/standup/new` with three fields: Yesterday, Today, Blockers.
-<img width="1920" height="985" alt="create-standup" src="https://github.com/user-attachments/assets/b840383a-d9cf-455e-8307-a2db45f2a899" />
-<img width="1920" height="985" alt="user-standup-warn" src="https://github.com/user-attachments/assets/27f6c823-e3f0-4c0f-8b16-379a84a9b521" />
+   <img width="1920" height="985" alt="create-standup" src="https://github.com/user-attachments/assets/b840383a-d9cf-455e-8307-a2db45f2a899" />
+   <img width="1920" height="985" alt="user-standup-warn" src="https://github.com/user-attachments/assets/27f6c823-e3f0-4c0f-8b16-379a84a9b521" />
 5. Member views the team board showing all colleagues' updates with a green/pending indicator per member.
-<img width="1920" height="1107" alt="finish-board" src="https://github.com/user-attachments/assets/6e514c02-e630-4e18-a078-bffc8bef6285" />
+   <img width="1920" height="1107" alt="finish-board" src="https://github.com/user-attachments/assets/6e514c02-e630-4e18-a078-bffc8bef6285" />
 
 > Screenshots / GIFs to be added.
 
@@ -312,6 +312,5 @@ chirp/
 
 **What was failing**
 
-- Some of the endpoints have ownership problems, a user could create standup in teams that they don't belong
-- Some security headers are missing
+- Some of the endpoints have ownership problems, admin could create digest and see boards for any team
 - Timezones is fixed to SGT

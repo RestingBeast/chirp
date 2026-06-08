@@ -29,7 +29,7 @@ export default async function AuthGuard({
 
   // 2. Optional: Basic role check if encoded in JWT
   if (requireAdmin && decoded.role !== "admin") {
-    redirect("/dashboard");
+    redirect("/board");
   }
 
   return <>{children}</>;
