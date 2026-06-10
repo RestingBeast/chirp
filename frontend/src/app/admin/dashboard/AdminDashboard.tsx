@@ -12,11 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   LayoutGrid,
-  Users,
+  Send,
   ArrowRight,
   ShieldCheck,
   Plus,
   UserPlus,
+  UserCog,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -78,13 +80,23 @@ export default function AdminDashboard({
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 gap-3">
+          <Link href="/admin/users">
+            <Button
+              variant="outline"
+              size="sm"
+              className="whitespace-nowrap w-full"
+            >
+              <UserCog className="w-4 h-4 mr-2" />
+              Manage Users
+            </Button>
+          </Link>
           <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
             <DialogTrigger
-              className="inline-flex items-center justify-center rounded-md 
-                text-sm font-medium ring-offset-background transition-colors 
+              className="inline-flex items-center justify-center rounded-md whitespace-nowrap w-full
+                text-sm font-medium ring-offset-background transition-colors
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
-                focus-visible:ring-offset-2 disabled:pointer-events-none 
+                focus-visible:ring-offset-2 disabled:pointer-events-none
                 disabled:opacity-50 border border-input bg-background hover:bg-accent
                 hover:text-accent-foreground px-4 h-8 shadow-sm"
             >
@@ -108,14 +120,13 @@ export default function AdminDashboard({
           {/* Create Invite Dialog */}
           <Dialog>
             <DialogTrigger
-              className="inline-flex items-center justify-center rounded-md 
-                text-sm font-medium ring-offset-background transition-colors 
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
-                focus-visible:ring-offset-2 disabled:pointer-events-none 
-                disabled:opacity-50 border border-input bg-background hover:bg-accent
-                hover:text-accent-foreground px-4 h-8 shadow-sm"
+              className="inline-flex items-center justify-center rounded-md text-sm whitespace-nowrap w-full
+                font-medium ring-offset-background transition-colors focus-visible:outline-none
+                focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+                disabled:pointer-events-none disabled:opacity-50 bg-primary
+                text-primary-foreground hover:bg-primary/90 px-4 h-8 shadow-sm"
             >
-              <Users className="w-4 h-4 mr-2" />
+              <Send className="w-4 h-4 mr-2" />
               Create Invite
             </DialogTrigger>
             <DialogContent className="sm:max-w-106.25">
@@ -129,18 +140,17 @@ export default function AdminDashboard({
               <CreateInviteForm teams={teams} />
             </DialogContent>
           </Dialog>
-
           {/* Create Team Dialog */}
           <Dialog open={open} onOpenChange={(o) => setOpen(o)}>
             <DialogTrigger
-              className="inline-flex items-center justify-center rounded-md text-sm 
+              className="inline-flex items-center justify-center rounded-md text-sm whitespace-nowrap w-full
                 font-medium ring-offset-background transition-colors focus-visible:outline-none
                 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
-                disabled:pointer-events-none disabled:opacity-50 bg-primary 
+                disabled:pointer-events-none disabled:opacity-50 bg-primary
                 text-primary-foreground hover:bg-primary/90 px-4 h-8 shadow-sm"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Create New Team
+              Create Team
             </DialogTrigger>
             <DialogContent className="sm:max-w-106.25">
               <DialogHeader>
