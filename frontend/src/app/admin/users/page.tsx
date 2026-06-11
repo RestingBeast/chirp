@@ -1,10 +1,13 @@
 import AuthGuard from "@/components/AuthGuard";
+import { getUsersAction } from "@/actions/users";
 import AdminUsers from "./AdminUsers";
 
-export default function AdminUsersPage() {
+export default async function AdminUsersPage() {
+  const { users } = await getUsersAction();
+
   return (
     <AuthGuard requireAdmin>
-      <AdminUsers />
+      <AdminUsers initialUsers={users} />
     </AuthGuard>
   );
 }
