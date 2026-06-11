@@ -44,6 +44,7 @@ export default function StandupForm() {
     today: "",
     blockers: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const MAX_CHARS = 500;
 
@@ -51,6 +52,7 @@ export default function StandupForm() {
     if (e.target.value.length <= MAX_CHARS) {
       setFields({ ...fields, [e.target.name]: e.target.value });
     }
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   };
 
   const handleFinalSubmit = async () => {
@@ -71,6 +73,12 @@ export default function StandupForm() {
       toast.success("Standup submitted!", { position: "top-center" });
       router.push("/board");
     } else {
+      if (result.errors) {
+        const errors = Object.fromEntries(
+          result.errors.map((e: any) => [e.field, e.message]),
+        );
+        setFieldErrors(errors);
+      }
       toast.error(result.message, { position: "top-center" });
       setIsLoading(false);
     }
@@ -102,6 +110,11 @@ export default function StandupForm() {
                 required
                 className="min-h-25 resize-none"
               />
+              {fieldErrors.yesterday && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.yesterday}
+                </p>
+              )}
             </div>
 
             {/* Today Section */}
@@ -121,6 +134,11 @@ export default function StandupForm() {
                 required
                 className="min-h-25 resize-none"
               />
+              {fieldErrors.today && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.today}
+                </p>
+              )}
             </div>
 
             {/* Blockers Section */}
@@ -139,6 +157,11 @@ export default function StandupForm() {
                 onChange={handleChange}
                 className="min-h-20 resize-none mb-4"
               />
+              {fieldErrors.blockers && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.blockers}
+                </p>
+              )}
             </div>
           </CardContent>
           <CardFooter>

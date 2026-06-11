@@ -14,12 +14,12 @@ export async function submitStandupAction(formData: {
     revalidatePath("/board");
     return { success: true, data: response };
   } catch (error: unknown) {
+    const err = error as any;
     const msg =
       error instanceof Error
         ? error.message
-        : ((error as any)?.message ??
-          "Failed to submit standup. You might have already posted today.");
-    return { success: false, message: msg };
+        : err?.message ?? "Failed to submit standup. You might have already posted today.";
+    return { success: false, message: msg, errors: err?.errors };
   }
 }
 
