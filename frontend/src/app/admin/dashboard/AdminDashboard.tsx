@@ -85,7 +85,7 @@ export default function AdminDashboard({
             <Button
               variant="outline"
               size="sm"
-              className="whitespace-nowrap w-full"
+              className="whitespace-nowrap w-full text-sm"
             >
               <UserCog className="w-4 h-4 mr-2" />
               Manage Users
