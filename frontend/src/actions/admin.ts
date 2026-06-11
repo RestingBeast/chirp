@@ -34,6 +34,24 @@ export async function getAdminDataAction() {
   }
 }
 
+export async function updateUserAction(
+  userId: string,
+  data: { name?: string; password?: string },
+) {
+  try {
+    const response = await serverApiClient.patch(`/api/users/${userId}`, data);
+    return { success: true, data: response.data };
+  } catch (error: unknown) {
+    console.log(error);
+    const err = error as any;
+    const msg =
+      error instanceof Error
+        ? error.message
+        : (err?.message ?? "Failed to update user.");
+    return { success: false, message: msg, errors: err?.errors };
+  }
+}
+
 export async function createTeamAction(name: string) {
   try {
     const response = await serverApiClient.post("/api/teams", { name });

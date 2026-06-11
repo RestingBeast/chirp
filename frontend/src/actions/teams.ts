@@ -11,7 +11,7 @@ export async function assignUserAction({
   teamId,
 }: {
   userId: string;
-  teamId: string;
+  teamId: string | null;
 }) {
   try {
     // Calls the controller endpoint created above

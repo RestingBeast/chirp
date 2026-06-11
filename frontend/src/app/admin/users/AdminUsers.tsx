@@ -42,20 +42,29 @@ import {
   Users,
 } from "lucide-react";
 import type { User } from "@/types/user.types";
+import type { Team } from "@/types/team.types";
+import { updateUserAction } from "@/actions/admin";
+import { assignUserAction } from "@/actions/teams";
 
 const PAGE_SIZE = 10;
 
 interface AdminUsersProps {
   initialUsers: User[];
+  initialTeams: Team[];
 }
 
-export default function AdminUsers({ initialUsers }: AdminUsersProps) {
+export default function AdminUsers({
+  initialUsers,
+  initialTeams,
+}: AdminUsersProps) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [currentPage, setCurrentPage] = useState(1);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
   const [editName, setEditName] = useState("");
-  const [editRole, setEditRole] = useState<"admin" | "member">("member");
+  const [editTeamId, setEditTeamId] = useState<string>("none");
+  const [editPassword, setEditPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const totalPages = Math.ceil(users.length / PAGE_SIZE);
   const paginatedUsers = useMemo(
@@ -66,20 +75,81 @@ export default function AdminUsers({ initialUsers }: AdminUsersProps) {
   const openEditDialog = (user: User) => {
     setEditingUser(user);
     setEditName(user.name);
-    setEditRole(user.role);
+    setEditTeamId(user.teamId?._id ?? "none");
+    setEditPassword("");
+    setFieldErrors({});
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingUser) return;
-    setUsers((prev) =>
-      prev.map((u) =>
-        u._id === editingUser._id
-          ? { ...u, name: editName, role: editRole }
-          : u,
-      ),
-    );
-    setEditingUser(null);
-    toast.success("User updated", { position: "bottom-center" });
+
+    const promises: Promise<any>[] = [];
+
+    if (editName !== editingUser.name || editPassword) {
+      promises.push(
+        updateUserAction(editingUser._id, {
+          ...(editName !== editingUser.name && { name: editName }),
+          ...(editPassword && { password: editPassword }),
+        }),
+      );
+    }
+
+    const currentTeamId = editingUser.teamId?._id ?? "none";
+    if (editTeamId !== currentTeamId) {
+      promises.push(
+        assignUserAction({
+          userId: editingUser._id,
+          teamId: editTeamId === "none" ? null : editTeamId,
+        }),
+      );
+    }
+
+    if (promises.length === 0) {
+      setEditingUser(null);
+      return;
+    }
+
+    const results = await Promise.all(promises);
+    const allOk = results.every((r) => r.success);
+
+    if (allOk) {
+      setUsers((prev) =>
+        prev.map((u) =>
+          u._id === editingUser._id
+            ? {
+                ...u,
+                ...(editName !== u.name && { name: editName }),
+                ...(editTeamId !== (u.teamId?._id ?? "none") && {
+                  teamId:
+                    editTeamId === "none"
+                      ? undefined
+                      : {
+                          _id: editTeamId,
+                          name:
+                            initialTeams.find((t) => t._id === editTeamId)
+                              ?.name ?? "",
+                        },
+                }),
+              }
+            : u,
+        ),
+      );
+      setEditingUser(null);
+      toast.success("User updated", { position: "bottom-center" });
+    } else {
+      for (const result of results) {
+        if (!result.success && result.errors) {
+          const errors = Object.fromEntries(
+            result.errors.map((e: any) => [e.field, e.message]),
+          );
+          setFieldErrors(errors);
+        }
+      }
+      const failed = results.find((r) => !r.success);
+      toast.error(failed?.message ?? "Failed to update user", {
+        position: "bottom-center",
+      });
+    }
   };
 
   const handleDelete = () => {
@@ -255,9 +325,15 @@ export default function AdminUsers({ initialUsers }: AdminUsersProps) {
               <Input
                 id="edit-name"
                 value={editName}
-                onChange={(e) => setEditName(e.target.value)}
+                onChange={(e) => {
+                  setEditName(e.target.value);
+                  setFieldErrors((prev) => ({ ...prev, name: "" }));
+                }}
                 placeholder="User name"
               />
+              {fieldErrors.name && (
+                <p className="text-xs text-destructive">{fieldErrors.name}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-email">Email</Label>
@@ -268,19 +344,46 @@ export default function AdminUsers({ initialUsers }: AdminUsersProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-role">Role</Label>
+              <Label htmlFor="edit-team">Team</Label>
               <Select
-                value={editRole}
-                onValueChange={(v: "admin" | "member" | null) => v && setEditRole(v)}
+                value={editTeamId}
+                onValueChange={(v) => v && setEditTeamId(v)}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue />
+                  <SelectValue>
+                    {editTeamId === "none"
+                      ? "Unassigned"
+                      : initialTeams.find((t) => t._id === editTeamId)?.name}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="member">Member</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="none">Unassigned</SelectItem>
+                  {initialTeams.map((team) => (
+                    <SelectItem key={team._id} value={team._id}>
+                      {team.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-password">Reset password</Label>
+              <Input
+                id="edit-password"
+                type="password"
+                placeholder="Leave blank to keep current"
+                value={editPassword}
+                onChange={(e) => {
+                  setEditPassword(e.target.value);
+                  setFieldErrors((prev) => ({ ...prev, password: "" }));
+                }}
+                minLength={8}
+              />
+              {fieldErrors.password && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.password}
+                </p>
+              )}
             </div>
           </div>
           <DialogFooter>

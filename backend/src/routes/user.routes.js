@@ -4,8 +4,9 @@ import { validate } from "../middlewares/validate.js";
 import {
   assignUserToTeam,
   getAllUsers,
+  updateUser,
 } from "../controllers/user.controller.js";
-import { assignUserSchema } from "../schemas/user.schema.js";
+import { assignUserSchema, updateUserSchema } from "../schemas/user.schema.js";
 
 const router = Router();
 
@@ -27,6 +28,19 @@ router.put(
   requireRole("admin"),
   validate(assignUserSchema),
   assignUserToTeam,
+);
+
+/**
+ * @route   PATCH /api/users/:id
+ * @desc    Update user name and/or password
+ * @access  Private/Admin
+ */
+router.patch(
+  "/:id",
+  protect,
+  requireRole("admin"),
+  validate(updateUserSchema),
+  updateUser,
 );
 
 export default router;

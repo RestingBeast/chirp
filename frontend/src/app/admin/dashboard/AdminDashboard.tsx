@@ -111,7 +111,7 @@ export default function AdminDashboard({
                 </DialogDescription>
               </DialogHeader>
               <AssignUserForm
-                users={users} // You'll need to fetch all users in the server component
+                users={users}
                 teams={teams}
                 onSuccess={() => setAssignOpen(false)}
               />

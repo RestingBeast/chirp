@@ -121,7 +121,7 @@ export default function CreateInviteForm({ teams }: CreateInviteFormProps) {
           <SelectTrigger value={teamId} className="h-12 w-full">
             <SelectValue placeholder="Select a team">
               {teamId === "none"
-                ? "No Team (General Access)"
+                ? "No Team (Unassigned)"
                 : (teams.find((t) => t._id === teamId)?.name ??
                   "Select a team")}
             </SelectValue>
@@ -129,7 +129,7 @@ export default function CreateInviteForm({ teams }: CreateInviteFormProps) {
 
           <SelectContent>
             <SelectItem value="none" className="text-muted-foreground">
-              No Team (General Access)
+              No Team (Unassigned)
             </SelectItem>
             {teams.map((team) => (
               <SelectItem key={team._id} value={team._id}>
@@ -141,7 +141,7 @@ export default function CreateInviteForm({ teams }: CreateInviteFormProps) {
 
         <p className="text-[11px] text-muted-foreground px-1">
           {teamId === "none"
-            ? "Users can join or create a team after signing up."
+            ? "You can assign users to a team later."
             : `Users will be automatically added to ${teams.find((t) => t._id === teamId)?.name || "the team"}.`}
         </p>
       </div>

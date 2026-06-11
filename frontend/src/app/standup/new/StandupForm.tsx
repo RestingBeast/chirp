@@ -88,7 +88,15 @@ export default function StandupForm() {
     <main className="min-h-screen flex items-center justify-center bg-muted/30 px-4 py-10">
       <Card className="w-full max-w-2xl">
         <CardHeader>
-          <CardTitle className="text-xl">Daily Standup</CardTitle>
+          <CardTitle className="text-xl">
+            Daily Standup (
+            {new Date().toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
+            )
+          </CardTitle>
           <CardDescription>Keep it brief, keep it useful.</CardDescription>
         </CardHeader>
         <form onSubmit={onTriggerSubmit}>
@@ -135,9 +143,7 @@ export default function StandupForm() {
                 className="min-h-25 resize-none"
               />
               {fieldErrors.today && (
-                <p className="text-xs text-destructive">
-                  {fieldErrors.today}
-                </p>
+                <p className="text-xs text-destructive">{fieldErrors.today}</p>
               )}
             </div>
 

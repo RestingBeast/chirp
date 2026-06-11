@@ -43,7 +43,7 @@ export const assignUserToTeam = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { teamId: teamId === "none" || !teamId ? null : teamId },
-      { new: true, runValidators: true },
+      { returnDocument: "after", runValidators: true },
     );
 
     if (!updatedUser) {
@@ -62,5 +62,39 @@ export const assignUserToTeam = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "Server error during assignment" });
+  }
+};
+
+/**
+ * Updates a user's name and/or password.
+ * Expects userId as a route parameter, and name/password in the request body.
+ */
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, password } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (name !== undefined) user.name = name;
+    if (password !== undefined) user.passwordHash = password;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `${user.name} updated successfully`,
+      data: user.toSafeObject(),
+    });
+  } catch (error) {
+    console.error("Error in updateUser:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error during user update" });
   }
 };
