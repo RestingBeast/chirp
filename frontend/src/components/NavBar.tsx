@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut } from "lucide-react";
+import { LogIn, LogOut, Settings } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { logoutAction } from "@/actions/auth";
 
@@ -32,12 +32,21 @@ export default function Navbar({ loggedIn = false }: NavBarProps) {
           chirp
         </Link>
         {!disabled && loggedIn && (
-          <Link
-            href={"/board"}
-            className="text-base ml-auto mr-8 hover:opacity-80 transition-opacity"
-          >
-            Dashboard
-          </Link>
+          <>
+            <Link
+              href={"/board"}
+              className="text-base ml-auto mr-8 hover:opacity-80 transition-opacity"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href={"/account/change-password"}
+              className="text-base mr-8 hover:opacity-80 transition-opacity text-muted-foreground hover:text-foreground"
+            >
+              <Settings className="size-4 inline-block -mt-0.5 mr-1" />
+              Settings
+            </Link>
+          </>
         )}
 
         {!disabled &&

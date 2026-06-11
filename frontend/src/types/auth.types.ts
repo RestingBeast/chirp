@@ -8,7 +8,6 @@ export interface Payload {
 
 export interface AuthState {
   user: Payload | null;
-  token: string | null;
   isLoading: boolean;
   error: string | string[] | null;
 }

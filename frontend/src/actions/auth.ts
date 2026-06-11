@@ -47,11 +47,12 @@ export async function registerAction(payload: any) {
 
     return { success: true, user: data.user };
   } catch (error: unknown) {
+    const err = error as any;
     const msg =
       error instanceof Error
         ? error.message
-        : ((error as any)?.message ?? "Registration failed.");
-    return { success: false, message: msg };
+        : (err?.message ?? "Registration failed.");
+    return { success: false, message: msg, errors: err };
   }
 }
 

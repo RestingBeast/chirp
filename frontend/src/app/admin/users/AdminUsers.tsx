@@ -444,7 +444,7 @@ export default function AdminUsers() {
               <Label htmlFor="edit-role">Role</Label>
               <Select
                 value={editRole}
-                onValueChange={(v: "admin" | "member") => setEditRole(v)}
+                onValueChange={(v: "admin" | "member" | null) => v && setEditRole(v)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue />

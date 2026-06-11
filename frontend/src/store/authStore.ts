@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AuthState, User } from "@/types/auth.types";
+import type { AuthState, Payload } from "@/types/auth.types";
 
 interface SimpleAuthStore extends AuthState {
-  setUser: (user: User | null) => void;
+  setUser: (user: Payload | null) => void;
   logout: () => void;
 }
 
@@ -11,7 +11,6 @@ export const useAuthStore = create<SimpleAuthStore>()(
   persist(
     (set) => ({
       user: null,
-      token: null, // Always null on client for HttpOnly setup
       isLoading: false,
       error: null,
 
