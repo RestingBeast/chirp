@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Team from "../models/team.model.js";
 
 /**
  * Retrieves all users from the database.
@@ -6,11 +7,15 @@ import User from "../models/user.model.js";
  */
 export const getAllUsers = async (req, res) => {
   try {
-    // 1. Fetch all non-deleted users from the database
-    const users = await User.find({ role: "member", deletedAt: null }).populate(
-      "teamId",
-      "name",
-    );
+    // 1. Fetch non-deleted users invited by this admin
+    const users = await User.find({
+      role: "member",
+      deletedAt: null,
+      invitedBy: req.user.sub,
+    }).populate([
+      { path: "teamId", select: "name" },
+      { path: "invitedBy", select: "name email" },
+    ]);
 
     // 2. Use your toSafeObject method to sanitize each user
     // This ensures passwordHash is not included in the response
@@ -37,6 +42,18 @@ export const getAllUsers = async (req, res) => {
 export const assignUserToTeam = async (req, res) => {
   try {
     const { userId, teamId } = req.body;
+
+    if (teamId && teamId !== "none") {
+      const team = await Team.findOne({
+        _id: teamId,
+        adminId: req.user.sub,
+      });
+      if (!team) {
+        return res
+          .status(403)
+          .json({ success: false, message: "You do not own this team" });
+      }
+    }
 
     // 2. Perform the update — skip soft-deleted users
     // If teamId is "none" or null, we set it to null in the DB
@@ -74,11 +91,22 @@ export const updateUser = async (req, res) => {
     const { id } = req.params;
     const { name, password } = req.body;
 
-    const user = await User.findOne({ _id: id, deletedAt: null });
+    const user = await User.findOne({ _id: id, deletedAt: null }).populate(
+      "teamId",
+      "adminId",
+    );
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
+    }
+    if (
+      user.teamId &&
+      user.teamId.adminId.toString() !== req.user.sub
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, message: "You do not own this user's team" });
     }
 
     if (name !== undefined) user.name = name;
@@ -106,17 +134,29 @@ export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const user = await User.findByIdAndUpdate(
-      id,
-      { deletedAt: new Date(), teamId: null },
-      { returnDocument: "after", runValidators: true },
+    // Verify user belongs to a team owned by this admin
+    const user = await User.findOne({ _id: id, deletedAt: null }).populate(
+      "teamId",
+      "adminId",
     );
-
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
+    if (
+      user.teamId &&
+      user.teamId.adminId.toString() !== req.user.sub
+    ) {
+      return res
+        .status(403)
+        .json({ success: false, message: "You do not own this user's team" });
+    }
+
+    await User.findByIdAndUpdate(id, {
+      deletedAt: new Date(),
+      teamId: null,
+    });
 
     return res.status(200).json({
       success: true,

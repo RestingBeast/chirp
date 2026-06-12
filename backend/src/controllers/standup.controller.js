@@ -1,5 +1,6 @@
 import Standup from "../models/standup.model.js";
 import Digest from "../models/digest.model.js";
+import Team from "../models/team.model.js";
 import { createTeamDigest } from "../services/ai.service.js";
 
 export async function submitStandup(req, res) {
@@ -77,6 +78,13 @@ export async function generateTeamDigest(req, res) {
       new Date().toLocaleDateString("en-CA", {
         timeZone: "Asia/Singapore",
       });
+
+    const team = await Team.findOne({ _id: teamId, adminId: req.user.sub });
+    if (!team) {
+      return res
+        .status(403)
+        .json({ success: false, message: "You do not own this team" });
+    }
 
     // 1. Get all standups for this team today
     const standups = await Standup.find({ teamId, date }).populate(

@@ -100,7 +100,10 @@ export const deleteEmptyTeam = async (req, res) => {
     }
 
     // 2. Delete the team
-    const deletedTeam = await Team.findByIdAndDelete(teamId);
+    const deletedTeam = await Team.findOneAndDelete({
+      _id: teamId,
+      adminId: req.user.sub,
+    });
 
     if (!deletedTeam) {
       return res

@@ -74,6 +74,7 @@ export async function register(req, res) {
       existing.passwordHash = password;
       existing.role = invite.role || "member";
       existing.teamId = invite.teamId || null;
+      existing.invitedBy = invite.createdBy || existing.invitedBy;
       existing.deletedAt = null;
       await existing.save();
       user = existing;
@@ -86,6 +87,7 @@ export async function register(req, res) {
         passwordHash: password,
         role: invite.role || "member",
         teamId: invite.teamId || null,
+        invitedBy: invite.createdBy || null,
       });
     }
 

@@ -29,6 +29,11 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "member"],
       default: "member",
     },
+    invitedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     teamId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
@@ -59,6 +64,7 @@ userSchema.methods.toSafeObject = function () {
     email: this.email,
     name: this.name,
     role: this.role,
+    invitedBy: this.invitedBy,
     teamId: this.teamId,
     createdAt: this.createdAt,
   };

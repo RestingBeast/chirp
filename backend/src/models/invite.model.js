@@ -20,6 +20,11 @@ const inviteSchema = new mongoose.Schema(
       ref: "Team",
       default: null,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     role: {
       type: String,
       enum: ["admin", "member"],

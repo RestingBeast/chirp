@@ -70,6 +70,7 @@ async function seed() {
           ...u,
           passwordHash: "Test1234",
           role: "member",
+          invitedBy: admin._id,
           teamId: engineeringTeam._id,
         }),
       ),
@@ -219,6 +220,7 @@ async function seed() {
       const res = await Invite.create({
         email: data.email,
         role: data.role,
+        createdBy: admin._id,
       });
 
       const baseUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";

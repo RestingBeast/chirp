@@ -26,6 +26,7 @@ export async function createInvite(req, res) {
       email: email.toLowerCase(),
       role: role || "member",
       teamId: teamId || null,
+      createdBy: req.user.sub,
     });
 
     // Construct the join link for the admin to copy
