@@ -52,7 +52,7 @@ export async function renameTeam(req, res) {
     const team = await Team.findOneAndUpdate(
       { _id: teamId, adminId: req.user.sub },
       { name },
-      { new: true, runValidators: true },
+      { returnDocument: "after", runValidators: true },
     );
 
     if (!team) {
