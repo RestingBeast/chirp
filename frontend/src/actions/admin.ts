@@ -65,10 +65,11 @@ export async function createTeamAction(name: string) {
   }
 }
 
-export async function generateTeamDigestAction(teamId: string) {
+export async function generateTeamDigestAction(teamId: string, date?: string) {
   try {
     const response = await serverApiClient.post("/api/standups/digest", {
       teamId,
+      date,
     });
     revalidatePath("/board");
     return { success: true, data: response.data };

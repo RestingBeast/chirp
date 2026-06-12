@@ -29,5 +29,5 @@ export async function createTeamDigest(standups) {
     - Keep it under 500 characters total.
   `;
 
-  return await generateNarrative(prompt);
+  return await generateDigest(prompt);
 }

@@ -71,10 +71,12 @@ export async function getTeamStandups(req, res) {
 
 export async function generateTeamDigest(req, res) {
   try {
-    const { teamId } = req.body;
-    const date = new Date().toLocaleDateString("en-CA", {
-      timeZone: "Asia/Singapore",
-    });
+    const { teamId, date: reqDate } = req.body;
+    const date =
+      reqDate ||
+      new Date().toLocaleDateString("en-CA", {
+        timeZone: "Asia/Singapore",
+      });
 
     // 1. Get all standups for this team today
     const standups = await Standup.find({ teamId, date }).populate(
@@ -94,6 +96,7 @@ export async function generateTeamDigest(req, res) {
 
     res.json({ success: true, data: digest });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ success: false, message: "AI generation failed" });
   }
 }

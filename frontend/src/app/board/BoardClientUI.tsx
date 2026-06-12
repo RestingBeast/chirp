@@ -107,7 +107,7 @@ export default function BoardClientUI({
 
   const handleGenerateDigest = async () => {
     setIsGenerating(true);
-    const result = await generateTeamDigestAction(teamId);
+    const result = await generateTeamDigestAction(teamId, date);
     if (result.success) {
       toast.success("Digest Generated!", { position: "top-center" });
     } else {
