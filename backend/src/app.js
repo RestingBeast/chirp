@@ -38,6 +38,11 @@ app.use("/api/teams", teamRouter);
 app.use("/api/standups", standupRouter);
 app.use("/api/users", userRouter);
 
+// 404 handler — return JSON instead of HTML
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: "Route not found" });
+});
+
 app.listen(port, () => {
   console.log(`Backend running on port ${port}`);
 });

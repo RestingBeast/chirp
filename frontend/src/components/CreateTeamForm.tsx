@@ -28,12 +28,12 @@ export default function CreateTeamForm({ onSuccess }: CreateTeamFormProps) {
       toast.success("Team created successfully", { position: "bottom-center" });
       router.refresh();
       setName("");
+      onSuccess?.();
     } else {
       toast.error(result.message || "Failed to create team", {
         position: "bottom-center",
       });
     }
-    onSuccess?.();
     setLoading(false);
   }
 

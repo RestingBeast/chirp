@@ -12,7 +12,7 @@ export async function submitStandupAction(formData: {
   try {
     const response = await serverApiClient.post("/api/standups", formData);
     revalidatePath("/board");
-    return { success: true, data: response };
+    return { success: true, data: response.data };
   } catch (error: unknown) {
     const err = error as any;
     const msg =
@@ -40,7 +40,11 @@ export async function getTeamBoardAction(teamId: string, date?: string) {
       date: data.date,
       digest: data.digest,
     };
-  } catch (error: any) {
-    return { success: false, message: "Failed to load team board." };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Failed to load team board.");
+    return { success: false, message: msg };
   }
 }

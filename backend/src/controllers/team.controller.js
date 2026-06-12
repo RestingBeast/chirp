@@ -90,7 +90,7 @@ export const deleteEmptyTeam = async (req, res) => {
     }
 
     // 1. Check if any users are currently assigned to this team
-    const memberCount = await User.countDocuments({ teamId });
+    const memberCount = await User.countDocuments({ teamId, deletedAt: null });
 
     if (memberCount > 0) {
       return res.status(400).json({

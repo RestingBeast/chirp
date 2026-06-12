@@ -10,7 +10,7 @@ export async function loginAction(formData: any) {
     // Your backend (auth.controller.js) will set the HttpOnly cookie in the response
     const data = await serverApiClient.post(`/api/auth/login`, formData);
 
-    const expirationDays = Number(process.env.TOKEN_EXPIRATION);
+    const expirationDays = Number(process.env.COOKIE_MAX_DAYS);
     const cookieStore = await cookies();
     cookieStore.set("token", data.token, {
       httpOnly: true,

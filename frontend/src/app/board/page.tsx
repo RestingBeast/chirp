@@ -36,7 +36,7 @@ export default async function TeamBoardPage({
       <main className="p-6">
         {/* Pass the data down to your UI component */}
         <BoardClientUI
-          initialStandups={standups}
+          initialStandups={standups ?? []}
           date={date ?? fetchDate}
           teamId={effectiveTeamId}
           digest={digest}

@@ -1,3 +1,5 @@
+"use server";
+
 import { serverApiClient } from "@/lib/apiClient.server";
 
 export async function getUsersAction() {
