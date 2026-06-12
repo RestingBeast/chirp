@@ -241,27 +241,15 @@ export default function AdminUsers({
                         <Pencil className="size-3.5" />
                         <span className="sr-only">Edit {user.name}</span>
                       </Button>
-                      {!user.teamId ? (
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => setDeletingUser(user)}
-                        >
-                          <Trash2 className="size-3.5" />
-                          <span className="sr-only">Delete {user.name}</span>
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          disabled
-                          className="opacity-30"
-                        >
-                          <Trash2 className="size-3.5" />
-                          <span className="sr-only">Delete {user.name}</span>
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => setDeletingUser(user)}
+                      >
+                        <Trash2 className="size-3.5" />
+                        <span className="sr-only">Delete {user.name}</span>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -424,7 +412,7 @@ export default function AdminUsers({
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
             >
-              Delete User
+              <span className="text-white">Confirm</span>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

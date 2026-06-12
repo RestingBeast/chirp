@@ -91,22 +91,16 @@ export const updateUser = async (req, res) => {
     const { id } = req.params;
     const { name, password } = req.body;
 
-    const user = await User.findOne({ _id: id, deletedAt: null }).populate(
-      "teamId",
-      "adminId",
-    );
+    const user = await User.findOne({ _id: id, deletedAt: null });
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-    if (
-      user.teamId &&
-      user.teamId.adminId.toString() !== req.user.sub
-    ) {
+    if (user.invitedBy?.toString() !== req.user.sub) {
       return res
         .status(403)
-        .json({ success: false, message: "You do not own this user's team" });
+        .json({ success: false, message: "You did not invite this user" });
     }
 
     if (name !== undefined) user.name = name;
@@ -134,23 +128,16 @@ export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Verify user belongs to a team owned by this admin
-    const user = await User.findOne({ _id: id, deletedAt: null }).populate(
-      "teamId",
-      "adminId",
-    );
+    const user = await User.findOne({ _id: id, deletedAt: null });
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-    if (
-      user.teamId &&
-      user.teamId.adminId.toString() !== req.user.sub
-    ) {
+    if (user.invitedBy?.toString() !== req.user.sub) {
       return res
         .status(403)
-        .json({ success: false, message: "You do not own this user's team" });
+        .json({ success: false, message: "You did not invite this user" });
     }
 
     await User.findByIdAndUpdate(id, {
