@@ -43,7 +43,7 @@ import {
 } from "lucide-react";
 import type { User } from "@/types/user.types";
 import type { Team } from "@/types/team.types";
-import { updateUserAction } from "@/actions/admin";
+import { updateUserAction, deleteUserAction } from "@/actions/admin";
 import { assignUserAction } from "@/actions/teams";
 
 const PAGE_SIZE = 10;
@@ -152,14 +152,19 @@ export default function AdminUsers({
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deletingUser) return;
-    setUsers((prev) => prev.filter((u) => u._id !== deletingUser._id));
-    const newTotal = users.length - 1;
-    const maxPage = Math.ceil(newTotal / PAGE_SIZE);
-    if (currentPage > maxPage) setCurrentPage(maxPage);
-    setDeletingUser(null);
-    toast.success("User deleted", { position: "bottom-center" });
+    const result = await deleteUserAction(deletingUser._id);
+    if (result.success) {
+      setUsers((prev) => prev.filter((u) => u._id !== deletingUser._id));
+      const newTotal = users.length - 1;
+      const maxPage = Math.ceil(newTotal / PAGE_SIZE);
+      if (currentPage > maxPage) setCurrentPage(maxPage);
+      setDeletingUser(null);
+      toast.success("User deactivated", { position: "bottom-center" });
+    } else {
+      toast.error(result.message, { position: "bottom-center" });
+    }
   };
 
   const startItem = Math.min((currentPage - 1) * PAGE_SIZE + 1, users.length);

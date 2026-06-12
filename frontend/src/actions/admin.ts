@@ -81,6 +81,20 @@ export async function generateTeamDigestAction(teamId: string) {
   }
 }
 
+export async function deleteUserAction(userId: string) {
+  try {
+    await serverApiClient.delete(`/api/users/${userId}`);
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error
+        ? error.message
+        : ((error as any)?.message ?? "Failed to delete user.");
+    return { success: false, message: msg };
+  }
+}
+
 export async function deleteTeamAction(teamId: string) {
   try {
     const response = await serverApiClient.delete(`/api/teams/${teamId}`);

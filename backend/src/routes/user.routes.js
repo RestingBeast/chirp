@@ -5,6 +5,7 @@ import {
   assignUserToTeam,
   getAllUsers,
   updateUser,
+  deleteUser,
 } from "../controllers/user.controller.js";
 import { assignUserSchema, updateUserSchema } from "../schemas/user.schema.js";
 
@@ -42,5 +43,12 @@ router.patch(
   validate(updateUserSchema),
   updateUser,
 );
+
+/**
+ * @route   DELETE /api/users/:id
+ * @desc    Soft-delete a user
+ * @access  Private/Admin
+ */
+router.delete("/:id", protect, requireRole("admin"), deleteUser);
 
 export default router;

@@ -58,25 +58,36 @@ export async function register(req, res) {
       });
     }
 
-    // 3. Duplicate email check — Mongo unique index will also catch this,
-    // but checking explicitly gives a cleaner error message.
+    // 3. Duplicate email check — revive soft-deleted, block active accounts.
     const existing = await User.findOne({ email: email.toLowerCase() });
-    if (existing) {
+    if (existing && !existing.deletedAt) {
       return res.status(409).json({
         success: false,
         message: "An account with that email already exists",
       });
     }
 
-    // Store raw password in passwordHash field —
-    // the pre-save hook hashes it before writing to Mongo.
-    const user = await User.create({
-      name,
-      email,
-      passwordHash: password,
-      role: invite.role || "member",
-      teamId: invite.teamId || null,
-    });
+    let user;
+    if (existing && existing.deletedAt) {
+      // Revive soft-deleted account
+      existing.name = name;
+      existing.passwordHash = password;
+      existing.role = invite.role || "member";
+      existing.teamId = invite.teamId || null;
+      existing.deletedAt = null;
+      await existing.save();
+      user = existing;
+    } else {
+      // Store raw password in passwordHash field —
+      // the pre-save hook hashes it before writing to Mongo.
+      user = await User.create({
+        name,
+        email,
+        passwordHash: password,
+        role: invite.role || "member",
+        teamId: invite.teamId || null,
+      });
+    }
 
     invite.used = true;
     await invite.save();
@@ -103,7 +114,7 @@ export async function login(req, res) {
       "+passwordHash",
     );
 
-    if (!user) {
+    if (!user || user.deletedAt) {
       // Same message for missing user AND wrong password — prevents enumeration
       return res.status(401).json({
         success: false,
