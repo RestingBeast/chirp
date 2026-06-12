@@ -11,8 +11,6 @@ export const useAuthStore = create<SimpleAuthStore>()(
   persist(
     (set) => ({
       user: null,
-      isLoading: false,
-      error: null,
 
       setUser: (user) => set({ user }),
 
