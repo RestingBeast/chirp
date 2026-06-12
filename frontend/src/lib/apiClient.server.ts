@@ -1,6 +1,17 @@
 import { cookies } from "next/headers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+const TIMEOUT_MS = 30_000;
+
+class ApiError extends Error {
+  errors?: { field: string; message: string }[];
+
+  constructor(message: string, errors?: { field: string; message: string }[]) {
+    super(message);
+    this.name = "ApiError";
+    this.errors = errors;
+  }
+}
 
 async function request(method: string, path: string, body?: unknown) {
   const cookieStore = await cookies();
@@ -14,16 +25,24 @@ async function request(method: string, path: string, body?: unknown) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, {
-    method,
-    headers,
-    ...(body !== undefined && { body: JSON.stringify(body) }),
-    cache: "no-store", // Ensure we get fresh data for auth-dependent calls
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-  const data = await res.json();
-  if (!res.ok) throw data;
-  return data;
+  try {
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method,
+      headers,
+      ...(body !== undefined && { body: JSON.stringify(body) }),
+      cache: "no-store",
+      signal: controller.signal,
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new ApiError(data.message || "Request failed", data.errors);
+    return data;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export const serverApiClient = {

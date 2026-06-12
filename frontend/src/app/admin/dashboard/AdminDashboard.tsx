@@ -230,6 +230,7 @@ export default function AdminDashboard({
                   {team.name}
                   <button
                     type="button"
+                    aria-label="Rename team"
                     onClick={() => {
                       setRenameValue(team.name);
                       setRenaming((prev) => ({ ...prev, [team._id]: true }));

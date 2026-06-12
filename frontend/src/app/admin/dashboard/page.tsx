@@ -2,7 +2,7 @@ import AuthGuard from "@/components/AuthGuard";
 import { getAdminDataAction } from "@/actions/admin";
 import AdminDashboard from "./AdminDashboard";
 
-export default async function TeamBoardPage() {
+export default async function AdminDashboardPage() {
   const { success, teams, users } = await getAdminDataAction();
 
   if (!success)
