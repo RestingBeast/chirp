@@ -4,6 +4,7 @@ import {
   getMyTeams,
   deleteEmptyTeam,
   getTeamMembers,
+  renameTeam,
 } from "../controllers/team.controller.js";
 import { protect, requireRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
@@ -30,6 +31,19 @@ router.post(
  * @access  Private
  */
 router.get("/", protect, requireRole("admin"), getMyTeams);
+
+/**
+ * @route   PATCH /api/teams/:teamId
+ * @desc
+ * @access  Private
+ */
+router.patch(
+  "/:teamId",
+  protect,
+  requireRole("admin"),
+  validate(createTeamSchema),
+  renameTeam,
+);
 
 /**
  * @route   DELETE /api/teams/:teamId

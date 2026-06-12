@@ -95,6 +95,23 @@ export async function deleteUserAction(userId: string) {
   }
 }
 
+export async function renameTeamAction(teamId: string, name: string) {
+  try {
+    const response = await serverApiClient.patch(`/api/teams/${teamId}`, {
+      name,
+    });
+    revalidatePath("/admin/dashboard");
+    return { success: true, data: response.data };
+  } catch (error: unknown) {
+    const err = error as any;
+    const msg =
+      error instanceof Error
+        ? error.message
+        : err?.message ?? "Failed to rename team.";
+    return { success: false, message: msg, errors: err?.errors };
+  }
+}
+
 export async function deleteTeamAction(teamId: string) {
   try {
     const response = await serverApiClient.delete(`/api/teams/${teamId}`);

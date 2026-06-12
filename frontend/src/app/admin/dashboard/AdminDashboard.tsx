@@ -33,10 +33,11 @@ import CreateTeamForm from "@/components/CreateTeamForm";
 import CreateInviteForm from "@/components/CreateInviteForm";
 import { useState } from "react";
 import AssignUserForm from "@/components/AssignUserForm";
+import { Input } from "@/components/ui/input";
 import { Team } from "@/types/team.types";
 import { User } from "@/types/user.types";
-import { Trash2, Loader2 } from "lucide-react"; // Add these imports
-import { deleteTeamAction } from "@/actions/admin"; // Import your new action
+import { Trash2, Loader2, Pencil } from "lucide-react";
+import { deleteTeamAction, renameTeamAction } from "@/actions/admin";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -63,6 +64,9 @@ export default function AdminDashboard({
 }: AdminDashboardProps) {
   const [assignOpen, setAssignOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const [renaming, setRenaming] = useState<Record<string, boolean>>({});
+  const [renameValue, setRenameValue] = useState("");
+  const [renameLoading, setRenameLoading] = useState<Record<string, boolean>>({});
   return (
     <main className="p-8 max-w-6xl mx-auto space-y-10">
       {/* Header Section */}
@@ -222,7 +226,85 @@ export default function AdminDashboard({
                     </Badge>
                   </div>
                 </div>
-                <CardTitle className="text-xl mt-4">{team.name}</CardTitle>
+                <CardTitle className="text-xl mt-4 flex items-center gap-2">
+                  {team.name}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRenameValue(team.name);
+                      setRenaming((prev) => ({ ...prev, [team._id]: true }));
+                    }}
+                    className="inline-flex items-center justify-center h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <Dialog
+                    open={renaming[team._id] ?? false}
+                    onOpenChange={(open) =>
+                      setRenaming((prev) => ({ ...prev, [team._id]: open }))
+                    }
+                  >
+                    <DialogContent className="sm:max-w-106.25">
+                      <DialogHeader>
+                        <DialogTitle>Rename team</DialogTitle>
+                        <DialogDescription>
+                          Enter a new name for "{team.name}".
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form
+                        onSubmit={async (e) => {
+                          e.preventDefault();
+                          if (!renameValue.trim()) return;
+                          setRenameLoading((prev) => ({
+                            ...prev,
+                            [team._id]: true,
+                          }));
+                          const res = await renameTeamAction(
+                            team._id,
+                            renameValue.trim(),
+                          );
+                          setRenameLoading((prev) => ({
+                            ...prev,
+                            [team._id]: false,
+                          }));
+                          if (res.success) {
+                            setRenaming((prev) => ({
+                              ...prev,
+                              [team._id]: false,
+                            }));
+                            toast.success("Team renamed", {
+                              position: "bottom-center",
+                            });
+                          } else {
+                            toast.error(res.message, {
+                              position: "bottom-center",
+                            });
+                          }
+                        }}
+                        className="flex items-center gap-2"
+                      >
+                        <Input
+                          value={renameValue}
+                          onChange={(e) => setRenameValue(e.target.value)}
+                          placeholder="Team name"
+                          minLength={2}
+                          maxLength={32}
+                          required
+                        />
+                        <Button
+                          type="submit"
+                          disabled={renameLoading[team._id]}
+                        >
+                          {renameLoading[team._id] ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            "Save"
+                          )}
+                        </Button>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
+                </CardTitle>
                 <CardDescription className="line-clamp-1">
                   Managed by {team.adminId.name}
                 </CardDescription>

@@ -11,14 +11,6 @@ export async function createTeam(req, res) {
     res.status(201).json({ success: true, data: team });
   } catch (err) {
     console.error("[createTeam]", err);
-
-    if (err.code === 11000) {
-      return res.status(409).json({
-        success: false,
-        message: "A team with this name already exists.",
-      });
-    }
-
     res.status(500).json({ success: false, message: "Server error" });
   }
 }
@@ -45,6 +37,36 @@ export const getTeamMembers = async (req, res) => {
     });
   }
 };
+
+export async function renameTeam(req, res) {
+  try {
+    const { teamId } = req.params;
+    const { name } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(teamId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Team ID" });
+    }
+
+    const team = await Team.findOneAndUpdate(
+      { _id: teamId, adminId: req.user.sub },
+      { name },
+      { new: true, runValidators: true },
+    );
+
+    if (!team) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Team not found" });
+    }
+
+    return res.status(200).json({ success: true, data: team });
+  } catch (err) {
+    console.error("[renameTeam]", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
 
 export async function getMyTeams(req, res) {
   const teams = await Team.find({ adminId: req.user.sub }).populate(
