@@ -2,7 +2,7 @@ export interface Payload {
   sub: string;
   name: string;
   email: string;
-  role: "admin" | "user";
+  role: "admin" | "member";
   teamId: string;
 }
 
