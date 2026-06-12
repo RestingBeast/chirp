@@ -3,6 +3,16 @@ import cors from "cors";
 import helmet from "helmet";
 import connectDB from "./config/db.js";
 import { generalLimiter } from "./middlewares/rateLimiter.js";
+
+if (!process.env.MONGO_URI) {
+  console.error("MONGO_URI is not defined in environment variables");
+  process.exit(1);
+}
+
+if (!process.env.JWT_SECRET) {
+  console.error("JWT_SECRET is not defined in environment variables");
+  process.exit(1);
+}
 import {
   authRouter,
   inviteRouter,
