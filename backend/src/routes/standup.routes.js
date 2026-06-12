@@ -26,7 +26,7 @@ router.post("/", protect, validate(createStandupSchema), submitStandup);
 router.get("/teams/:teamId", protect, getTeamStandups);
 
 /**
- * @route   GET /api/standups/team/:teamId
+ * @route   POST /api/standups/digest
  * @desc
  * @access  Private
  */

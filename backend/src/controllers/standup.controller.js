@@ -1,11 +1,19 @@
 import Standup from "../models/standup.model.js";
 import Digest from "../models/digest.model.js";
 import Team from "../models/team.model.js";
+import User from "../models/user.model.js";
 import { createTeamDigest } from "../services/ai.service.js";
 
 export async function submitStandup(req, res) {
   try {
     const { teamId, yesterday, today, blockers } = req.body;
+
+    const user = await User.findById(req.user.sub);
+    if (!user || user.deletedAt || (user.teamId?.toString() !== teamId && user.role !== "admin")) {
+      return res
+        .status(403)
+        .json({ success: false, message: "You are not a member of this team" });
+    }
 
     // Generate date string in Singapore time (YYYY-MM-DD)
     const todayDate = new Date().toLocaleDateString("en-CA", {
@@ -49,7 +57,7 @@ export async function getTeamStandups(req, res) {
 
     // 1. Run both queries in parallel for better performance
     const [standups, digest] = await Promise.all([
-      Standup.find({ teamId, date, createdAt: { $gte: start, $lte: end } })
+      Standup.find({ teamId, date })
         .populate("userId", "_id name email")
         .sort({ createdAt: 1 }),
       Digest.findOne({ teamId, date }),
@@ -104,7 +112,7 @@ export async function generateTeamDigest(req, res) {
 
     res.json({ success: true, data: digest });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ success: false, message: "AI generation failed" });
   }
 }
