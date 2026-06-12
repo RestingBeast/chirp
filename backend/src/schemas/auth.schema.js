@@ -14,3 +14,10 @@ export const loginSchema = z.object({
     .string({ required_error: "Password is required" })
     .min(1, "Password is required"), // no extra rules — avoids leaking policy info
 });
+
+export const changePasswordSchema = z.object({
+  oldPassword: z
+    .string({ required_error: "Current password is required" })
+    .min(1, "Current password is required"),
+  newPassword: passwordField,
+});

@@ -139,3 +139,45 @@ export async function login(req, res) {
     });
   }
 }
+
+// ─── POST /auth/change-password ──────────────────────────────────────────────
+// Body: { oldPassword, newPassword }
+// Access: Authenticated (both admin and member)
+
+export async function changePassword(req, res) {
+  try {
+    const userId = req.user.sub;
+    const { oldPassword, newPassword } = req.body;
+
+    // passwordHash is select: false — must opt back in explicitly
+    const user = await User.findById(userId).select("+passwordHash");
+
+    if (!user || user.deletedAt) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const isMatch = await user.comparePassword(oldPassword);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    user.passwordHash = newPassword;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    });
+  } catch (err) {
+    console.error("[changePassword]", err);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update password. Please try again.",
+    });
+  }
+}

@@ -70,6 +70,23 @@ export async function logoutAction() {
   redirect("/");
 }
 
+export async function changePasswordAction(payload: {
+  oldPassword: string;
+  newPassword: string;
+}) {
+  try {
+    await serverApiClient.post("/api/auth/change-password", payload);
+    return { success: true };
+  } catch (error: unknown) {
+    const err = error as any;
+    const msg =
+      error instanceof Error
+        ? error.message
+        : err?.message ?? "Failed to update password.";
+    return { success: false, message: msg, errors: err?.errors };
+  }
+}
+
 export async function validateInviteAction(token: string) {
   try {
     const data = await serverApiClient.get(`/api/invites/${token}`);

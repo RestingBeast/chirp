@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Lock } from "lucide-react";
+import { changePasswordAction } from "@/actions/auth";
 
 export default function ChangePasswordForm() {
   const [fields, setFields] = useState({
@@ -23,16 +24,19 @@ export default function ChangePasswordForm() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFields((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError(null);
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setFieldErrors({});
 
     if (!fields.oldPassword || !fields.newPassword || !fields.confirmPassword) {
       setError("All fields are required.");
@@ -40,20 +44,35 @@ export default function ChangePasswordForm() {
     }
 
     if (fields.newPassword.length < 8) {
-      setError("New password must be at least 8 characters.");
+      setFieldErrors({ newPassword: "Password must be at least 8 characters." });
       return;
     }
 
     if (fields.newPassword !== fields.confirmPassword) {
-      setError("New password and confirm password do not match.");
+      setFieldErrors({ confirmPassword: "Passwords do not match." });
       return;
     }
 
     setIsLoading(true);
-    // TODO: Call server action when backend endpoint is ready
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const result = await changePasswordAction({
+      oldPassword: fields.oldPassword,
+      newPassword: fields.newPassword,
+    });
     setIsLoading(false);
-    setSuccess(true);
+
+    if (result.success) {
+      setSuccess(true);
+    } else if (result.errors) {
+      const errors = Object.fromEntries(
+        result.errors.map((e: any) => [e.field, e.message]),
+      );
+      setFieldErrors(errors);
+      if (!errors.oldPassword && !errors.newPassword) {
+        setError(result.message);
+      }
+    } else {
+      setError(result.message);
+    }
   }
 
   if (success) {
@@ -110,6 +129,9 @@ export default function ChangePasswordForm() {
                 onChange={handleChange}
                 required
               />
+              {fieldErrors.oldPassword && (
+                <p className="text-xs text-destructive">{fieldErrors.oldPassword}</p>
+              )}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="newPassword">New password</Label>
@@ -123,6 +145,9 @@ export default function ChangePasswordForm() {
                 required
                 minLength={8}
               />
+              {fieldErrors.newPassword && (
+                <p className="text-xs text-destructive">{fieldErrors.newPassword}</p>
+              )}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="confirmPassword">Confirm new password</Label>
@@ -135,6 +160,9 @@ export default function ChangePasswordForm() {
                 onChange={handleChange}
                 required
               />
+              {fieldErrors.confirmPassword && (
+                <p className="text-xs text-destructive">{fieldErrors.confirmPassword}</p>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
