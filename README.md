@@ -46,7 +46,10 @@ Chirp is an invite-only standup board where team members post daily updates asyn
    <img width="1920" height="913" alt="delete-team1" src="https://github.com/user-attachments/assets/4c0f7672-16d4-4d51-8f94-4593560d6f0c" />
    <img width="1920" height="913" alt="delete-team2" src="https://github.com/user-attachments/assets/d85f3fe7-04ec-4e7b-9e95-48fdd60f072b" />
 10. Admin manages all users at `/admin/users` — paginated table, edit name/team/password, soft-delete.
+   <img width="1920" height="963" alt="image" src="https://github.com/user-attachments/assets/585fa7fb-d097-4f66-b36e-5d1564be3ce3" />
+   <img width="1920" height="963" alt="image" src="https://github.com/user-attachments/assets/d7373f22-5457-4900-a891-0d7a2d59cdc6" />
 11. Any user can change their password at `/account/change-password`.
+   <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/ca6ecd73-36f4-47cd-ab12-39ee6e904f5a" />
 
 **Member flow:**
 
