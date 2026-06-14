@@ -25,7 +25,6 @@ export async function getAdminDataAction() {
       users: usersResponse.data,
     };
   } catch (error: unknown) {
-    console.error("Admin Data Fetch Error:", error);
     const msg =
       error instanceof Error
         ? error.message
@@ -42,7 +41,6 @@ export async function updateUserAction(
     const response = await serverApiClient.patch(`/api/users/${userId}`, data);
     return { success: true, data: response.data };
   } catch (error: unknown) {
-    console.log(error);
     const err = error as any;
     const msg =
       error instanceof Error
@@ -108,7 +106,7 @@ export async function renameTeamAction(teamId: string, name: string) {
     const msg =
       error instanceof Error
         ? error.message
-        : err?.message ?? "Failed to rename team.";
+        : (err?.message ?? "Failed to rename team.");
     return { success: false, message: msg, errors: err?.errors };
   }
 }
